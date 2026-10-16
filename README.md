@@ -8,7 +8,7 @@ Kata yang dipakai adalah **ramah**, bukan aman. Jalan dipakai bersama, jadi pese
 
 - **Jalur Inti** (INT): Sudirman–Thamrin, Bundaran Senayan sampai Bundaran HI.
 - **Jalur Tangsel** (TGS): BSD–Bintaro–Lebak Bulus–Fatmawati–Blok M–Senayan.
-- 12 checkpoint, semuanya masih berstatus *Kandidat* sampai diverifikasi di lapangan.
+- 28 checkpoint (kafe, stasiun, bengkel dan toko sepeda), sebagian besar masih berstatus *Kandidat* sampai diverifikasi di lapangan.
 
 ## Cara memperbarui data
 

@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "sync-data": "node scripts/sync-data.mjs"
+    "sync-data": "node scripts/sync-data.mjs",
+    "buat-cabang": "node scripts/buat-cabang.mjs"
   },
   "dependencies": {
     "astro": "5.18.2",

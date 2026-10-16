@@ -2,7 +2,7 @@
 // Peta interaktif MapLibre di atas peta jalan OpenStreetMap.
 // garis: ruas rute (putus = ruas kereta). titik: 'utama' untuk awal, akhir,
 // dan stasiun; 'singgah' untuk kafe/bengkel yang bercabang dari rute.
-interface Cabang { titik: [number, number]; jarakM: number; arahkan: string }
+interface Cabang { garis: [number, number][]; jarakM: number; arahkan: string }
 interface Titik { nama: string; kategori: string; lat: number; lon: number; url?: string; jenis?: 'utama' | 'singgah'; cabang?: Cabang }
 interface Garis { coords: [number, number][]; warna: string; putus?: boolean }
 interface Props { garis?: Garis[]; titik: Titik[]; kecil?: boolean; label: string; teks?: { dariRute: string; arahkan: string } }
@@ -50,7 +50,7 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE, teks });
       // Garis cabang ke tempat singgah (tipis, putus-putus)
       const cabang = titik.filter((t: any) => t.cabang).map((t: any) => ({
         type: 'Feature', properties: {},
-        geometry: { type: 'LineString', coordinates: [t.cabang.titik, [t.lon, t.lat]] },
+        geometry: { type: 'LineString', coordinates: t.cabang.garis },
       }));
       if (cabang.length) {
         map.addSource('cabang', { type: 'geojson', data: { type: 'FeatureCollection', features: cabang } });

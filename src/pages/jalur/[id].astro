@@ -5,6 +5,10 @@ import { loadData, jalurSlug, cpSlug } from '../../lib/data';
 import { opsiJalur, type Opsi, type Ruas } from '../../lib/opsi';
 import { titikCabang } from '../../lib/urutan';
 import { TEKS, isi } from '../../teks';
+import fs from 'node:fs';
+// Garis cabang yang mengikuti jalan, dibuat dengan: npm run buat-cabang
+const CABANG: Record<string, { coords: [number, number][]; jarakM: number }> =
+  fs.existsSync('data/cabang.json') ? JSON.parse(fs.readFileSync('data/cabang.json', 'utf8')) : {};
 const T = TEKS.jalur;
 
 export async function getStaticPaths() {
@@ -55,17 +59,25 @@ function susunLin(o: Opsi): Titik[] {
 }
 
 const panel = opsi.map((o) => {
-  const gowesCoords = o.ruas.filter((r) => r.jenis === 'gowes').map((r) => r.coords);
+  const ruasGowes = o.ruas.filter((r) => r.jenis === 'gowes') as Extract<Ruas, { jenis: 'gowes' }>[];
   const singgah = kandidatSinggah
     .map((c) => {
-      let terbaik = { jarakKm: Infinity, titik: [c.lon, c.lat] as [number, number] };
-      for (const coords of gowesCoords) {
-        const t = titikCabang(c.lon, c.lat, coords);
-        if (t.jarakKm < terbaik.jarakKm) terbaik = t;
+      let terbaik = { jarakKm: Infinity, titik: [c.lon, c.lat] as [number, number], gpx: '' };
+      for (const r of ruasGowes) {
+        const t = titikCabang(c.lon, c.lat, r.coords);
+        if (t.jarakKm < terbaik.jarakKm) terbaik = { ...t, gpx: r.gpx };
       }
-      return { c, ...terbaik };
+      // Pakai garis cabang yang mengikuti jalan kalau sudah dihitung; kalau belum, garis lurus.
+      const jalan = CABANG[`${c.id}|${terbaik.gpx}`];
+      return {
+        c,
+        jarakLurusKm: terbaik.jarakKm,
+        jarakKm: jalan ? jalan.jarakM / 1000 : terbaik.jarakKm,
+        titik: jalan ? jalan.coords[0] : terbaik.titik,
+        garis: jalan ? jalan.coords : [terbaik.titik, [c.lon, c.lat]] as [number, number][],
+      };
     })
-    .filter((s) => s.jarakKm <= BATAS_SINGGAH_KM)
+    .filter((s) => s.jarakLurusKm <= BATAS_SINGGAH_KM)
     .sort((a, b) => a.jarakKm - b.jarakKm);
   const lin = susunLin(o);
   const stasiunTitik = o.ruas.flatMap((r) => (r.jenis === 'kereta' ? [r.stasiun[0], r.stasiun[r.stasiun.length - 1]] : []));
@@ -84,7 +96,7 @@ const panel = opsi.map((o) => {
         ...singgah.map((s) => ({
           nama: s.c.nama, kategori: s.c.kategoriLain ? `${s.c.kategori} · ${s.c.kategoriLain}` : s.c.kategori,
           lat: s.c.lat, lon: s.c.lon, url: `/cp/${cpSlug(s.c.id)}/`, jenis: 'singgah' as const,
-          cabang: { titik: s.titik, jarakM: s.jarakKm * 1000, arahkan: arahkan(s.titik, s.c.lat, s.c.lon) },
+          cabang: { garis: s.garis, jarakM: s.jarakKm * 1000, arahkan: arahkan(s.titik, s.c.lat, s.c.lon) },
         })),
       ],
     },

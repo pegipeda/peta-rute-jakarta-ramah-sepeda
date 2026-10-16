@@ -45,6 +45,8 @@ ID seperti `TGS-07` menjadi alamat halaman `/cp/tgs-07/` dan dicetak di QR. **Ja
 
 Setiap jalur punya satu atau lebih pilihan perjalanan di `data/opsi.json`. Satu pilihan terdiri dari ruas **gowes** (menunjuk file GPX) dan ruas **kereta** (daftar stasiun). Kafe dan bengkel bukan bagian dari rute: web otomatis menampilkannya sebagai tempat mampir kalau letaknya dalam 2 km dari ruas gowes, lengkap dengan garis cabang dari rute dan tombol menuju Google Maps.
 
+Garis cabang mengikuti jalan sungguhan dan disimpan di `data/cabang.json`. Setelah menambah checkpoint baru di sheet atau mengganti file GPX, jalankan `npm run sync-data` lalu `npm run buat-cabang` (atau minta Claude). Kalau belum dijalankan, tempat mampir yang baru tetap muncul, hanya saja garis cabangnya lurus.
+
 File GPX yang dipakai Jalur Tangsel:
 
 | File | Isi |

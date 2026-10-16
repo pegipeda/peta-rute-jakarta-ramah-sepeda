@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+import Peta from '../../components/Peta.astro';
+import { loadData, jalurSlug, cpSlug } from '../../lib/data';
+import { readGpx } from '../../lib/gpx';
+import { urutkanSepanjangRute } from '../../lib/urutan';
+
+export async function getStaticPaths() {
+  const { jalur } = await loadData();
+  return jalur.map((j) => ({ params: { id: jalurSlug(j.id) }, props: { jalurId: j.id } }));
+}
+
+const { jalurId } = Astro.props;
+const { checkpoints, jalur } = await loadData();
+const j = jalur.find((x) => x.id === jalurId)!;
+const gpx = readGpx(j.id);
+const milik = checkpoints.filter((c) => c.jalur === j.id);
+const { diRute, diLuar } = gpx ? urutkanSepanjangRute(milik, gpx.coords) : { diRute: milik, diLuar: [] };
+const draft = j.status === 'Draft' || gpx?.draft;
+const transit = diRute.filter((c) => c.kategori === 'Transit');
+---
+<Base judul={j.nama} deskripsi={`${j.nama}: ${j.dari} – ${j.ke}. Rute, checkpoint, dan file GPX.`}>
+  <div class="judul-jalur" style={`--warna-lin:${j.warna}`}>
+    <span class="warna" style={`background:${j.warna}`}></span>
+    <div>
+      <h1>{j.nama}</h1>
+      <p class="redup" style="margin:0">{j.dari} – {j.ke} {draft && <span class="chip draft">Draft</span>}</p>
+    </div>
+  </div>
+
+  {draft && (
+    <div class="peringatan">
+      <p><b>Rute ini masih draft.</b> Garisnya belum mengikuti jalan dan belum digowes untuk verifikasi, jadi jangan dipakai untuk navigasi dulu.</p>
+    </div>
+  )}
+
+  <dl class="statistik">
+    <div><dt>Jarak{draft ? ' (perkiraan)' : ''}</dt><dd>{gpx ? `${gpx.jarakKm.toLocaleString('id-ID')} km` : '—'}</dd></div>
+    <div><dt>Total tanjakan</dt><dd>{gpx?.tanjakanM != null ? `${gpx.tanjakanM} m` : '—'}</dd></div>
+    <div><dt>Checkpoint</dt><dd>{diRute.length}</dd></div>
+    <div><dt>Stasiun boleh sepeda non-lipat</dt><dd>{transit.filter((t) => t.sepedaNonLipat === 'Ya').length}</dd></div>
+  </dl>
+
+  <p style="display:flex;gap:10px;flex-wrap:wrap">
+    {gpx && <a class="tombol" href={`/gpx/${j.id}.gpx`} download={`${j.id}.gpx`}>Unduh GPX</a>}
+    <a class="tombol garis" href="/panduan/#transum">Aturan bawa sepeda di transum</a>
+  </p>
+
+  <div class="tata-jalur" style={`--warna-lin:${j.warna}`}>
+    <div>
+      {j.catatan && (
+        <div class="kotak">
+          <h3>Pilihan perjalanan</h3>
+          <p style="margin:0">{j.catatan}</p>
+        </div>
+      )}
+
+      <h2>Sepanjang jalur</h2>
+      <ol class="lin">
+        <li class="ujung"><span class="titik"></span><span class="ujung-label">{j.dari}</span></li>
+        {diRute.map((c) => (
+          <li>
+            <span class:list={['titik', { transit: c.kategori === 'Transit' }]}></span>
+            <a href={`/cp/${cpSlug(c.id)}/`}>{c.nama}</a>
+            <span class="meta">
+              {c.kategori}{c.kategoriLain ? ` · ${c.kategoriLain}` : ''}
+              {c.kategori === 'Transit' && c.sepedaNonLipat === 'Ya' ? ' · boleh sepeda non-lipat' : ''}
+            </span>
+            {c.jamBuka && <span class="meta">{c.jamBuka}</span>}
+          </li>
+        ))}
+        <li class="ujung"><span class="titik"></span><span class="ujung-label">{j.ke}</span></li>
+      </ol>
+
+      {diLuar.length > 0 && (
+        <div class="kotak">
+          <h3>Di luar rute</h3>
+          <p class="redup kecil">Masih tercatat di jalur ini, tapi letaknya lebih dari 1,5 km dari garis rute.</p>
+          <ul style="margin:0;padding-left:18px">
+            {diLuar.map((c) => <li><a href={`/cp/${cpSlug(c.id)}/`}>{c.nama}</a> <span class="redup kecil">{c.wilayah}</span></li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+
+    <div class="peta-wrap">
+      <Peta
+        label={`Peta ${j.nama}`}
+        garis={gpx ? [{ coords: gpx.coords, warna: j.warna }] : []}
+        titik={diRute.map((c) => ({ id: c.id, nama: c.nama, kategori: c.kategori, lat: c.lat, lon: c.lon, url: `/cp/${cpSlug(c.id)}/` }))}
+      />
+    </div>
+  </div>
+</Base>

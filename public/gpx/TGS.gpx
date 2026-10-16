@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="PegiPeda" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Jalur Tangsel BSD–Senayan (draft)</name>
+    <desc>DRAFT: garis kasar antar titik, belum digowes dan belum mengikuti jalan. Ganti file ini dengan rekaman GPX hasil survei.</desc>
+  </metadata>
+  <trk>
+    <name>Jalur Tangsel BSD–Senayan (draft)</name>
+    <trkseg>
+      <trkpt lat="-6.2906" lon="106.6275"></trkpt>
+      <trkpt lat="-6.2985" lon="106.65"></trkpt>
+      <trkpt lat="-6.288" lon="106.68"></trkpt>
+      <trkpt lat="-6.2748" lon="106.7054"></trkpt>
+      <trkpt lat="-6.273" lon="106.74"></trkpt>
+      <trkpt lat="-6.285" lon="106.765"></trkpt>
+      <trkpt lat="-6.2893" lon="106.7757"></trkpt>
+      <trkpt lat="-6.278" lon="106.796"></trkpt>
+      <trkpt lat="-6.265" lon="106.7975"></trkpt>
+      <trkpt lat="-6.2499" lon="106.7985"></trkpt>
+      <trkpt lat="-6.2445" lon="106.7981"></trkpt>
+      <trkpt lat="-6.2357" lon="106.7929"></trkpt>
+      <trkpt lat="-6.23" lon="106.8055"></trkpt>
+      <trkpt lat="-6.2272" lon="106.8017"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

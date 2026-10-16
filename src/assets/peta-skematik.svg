@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Peta skematik jalur sepeda: Jalur Inti Sudirman–Thamrin dan Jalur Tangsel dari BSD">
+  <!-- Peta skematik SEMENTARA. Ganti file ini dengan ekspor SVG dari Figma.
+       Aturan: setiap garis jalur dibungkus <g id="jalur-KODE">, misalnya id="jalur-TGS".
+       Web otomatis menjadikan grup itu bisa diklik menuju halaman jalurnya. -->
+  <g id="jalur-TGS">
+    <path d="M520 300 L400 420 L110 420" fill="none" stroke="#D9A21B" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="300" y="404" font-size="15" font-weight="800" style="fill:var(--tinta,#16201f)">Jalur Tangsel</text>
+  </g>
+  <g id="jalur-INT">
+    <path d="M520 70 L520 300" fill="none" stroke="#1F5C63" stroke-width="14" stroke-linecap="round"/>
+    <text x="544" y="175" font-size="15" font-weight="800" style="fill:var(--tinta,#16201f)">Jalur Inti</text>
+    <text x="544" y="194" font-size="12" style="fill:var(--tinta-redup,#56625f)">Sudirman–Thamrin</text>
+  </g>
+
+  <!-- Titik biasa -->
+  <g fill="#ffffff" stroke-width="4">
+    <circle cx="250" cy="420" r="9" stroke="#D9A21B"/>
+  </g>
+  <!-- Ujung jalur -->
+  <circle cx="110" cy="420" r="12" fill="#D9A21B"/>
+  <!-- Stasiun MRT yang menerima sepeda non-lipat -->
+  <g fill="#ffffff" stroke="#16201f" stroke-width="5">
+    <rect x="509" y="59" width="22" height="22" rx="5"/>
+    <rect x="509" y="239" width="22" height="22" rx="5"/>
+    <rect x="459" y="339" width="22" height="22" rx="5"/>
+    <rect x="389" y="409" width="22" height="22" rx="5"/>
+  </g>
+  <!-- Titik temu antarjalur -->
+  <circle cx="520" cy="300" r="15" fill="#ffffff" stroke="#16201f" stroke-width="5"/>
+
+  <g font-size="14" font-weight="700" style="fill:var(--tinta,#16201f)">
+    <text x="490" y="76" text-anchor="end">Bundaran HI</text>
+    <text x="490" y="256" text-anchor="end">Istora</text>
+    <text x="548" y="306">Bundaran Senayan</text>
+    <text x="494" y="372">Blok M</text>
+    <text x="400" y="456" text-anchor="middle">Lebak Bulus</text>
+    <text x="250" y="456" text-anchor="middle">Bintaro</text>
+    <text x="110" y="456" text-anchor="middle">BSD</text>
+  </g>
+
+  <g transform="translate(600 420)" font-size="12" style="fill:var(--tinta-redup,#56625f)">
+    <rect x="0" y="-11" width="16" height="16" rx="4" fill="#ffffff" stroke="#16201f" stroke-width="4"/>
+    <text x="26" y="2">MRT, boleh sepeda non-lipat</text>
+    <circle cx="8" cy="24" r="8" fill="#ffffff" stroke="#16201f" stroke-width="4"/>
+    <text x="26" y="28">Titik temu antarjalur</text>
+  </g>
+</svg>

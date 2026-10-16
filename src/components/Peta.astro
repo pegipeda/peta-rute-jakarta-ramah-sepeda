@@ -1,0 +1,79 @@
+---
+// Peta interaktif MapLibre. Menerima garis rute dan daftar titik.
+interface Titik { id: string; nama: string; kategori: string; lat: number; lon: number; url: string }
+interface Garis { coords: [number, number][]; warna: string }
+interface Props { garis?: Garis[]; titik: Titik[]; kecil?: boolean; label: string }
+const { garis = [], titik, kecil = false, label } = Astro.props;
+import { MAP_STYLE } from '../config';
+const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
+---
+<div class:list={['peta', { kecil }]} data-peta={data} role="region" aria-label={label}></div>
+
+<script>
+  import maplibregl from 'maplibre-gl';
+  import 'maplibre-gl/dist/maplibre-gl.css';
+
+  const WARNA_KATEGORI: Record<string, string> = {
+    'Transit': '#16201f',
+    'Bengkel': '#D9A21B',
+    'Kopi & rehat': '#1F5C63',
+  };
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+
+  document.querySelectorAll<HTMLElement>('[data-peta]').forEach((el) => {
+    const { garis, titik, style } = JSON.parse(el.dataset.peta!);
+    const semua: [number, number][] = [
+      ...garis.flatMap((g: any) => g.coords),
+      ...titik.map((t: any) => [t.lon, t.lat]),
+    ];
+    const map = new maplibregl.Map({
+      container: el,
+      style,
+      center: semua[0] ?? [106.8, -6.22],
+      zoom: 12,
+      cooperativeGestures: true,
+      attributionControl: { compact: true },
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+    if (semua.length > 1) {
+      const b = new maplibregl.LngLatBounds(semua[0], semua[0]);
+      semua.forEach((c) => b.extend(c));
+      map.fitBounds(b, { padding: 40, maxZoom: 15, animate: false });
+    } else if (semua.length === 1) {
+      map.setCenter(semua[0]); map.setZoom(15);
+    }
+
+    map.on('load', () => {
+      garis.forEach((g: any, i: number) => {
+        map.addSource(`garis-${i}`, {
+          type: 'geojson',
+          data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: g.coords } },
+        });
+        map.addLayer({ id: `garis-tepi-${i}`, type: 'line', source: `garis-${i}`,
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#ffffff', 'line-width': 9 } });
+        map.addLayer({ id: `garis-${i}`, type: 'line', source: `garis-${i}`,
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': g.warna, 'line-width': 5 } });
+      });
+    });
+
+    titik.forEach((t: any) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', t.nama);
+      const transit = t.kategori === 'Transit';
+      Object.assign(dot.style, {
+        width: '16px', height: '16px', padding: '0', cursor: 'pointer',
+        borderRadius: transit ? '4px' : '50%',
+        background: '#ffffff',
+        border: `4px solid ${WARNA_KATEGORI[t.kategori] ?? '#56625f'}`,
+        boxShadow: '0 0 0 2px #ffffff',
+      });
+      const popup = new maplibregl.Popup({ offset: 12, closeButton: false })
+        .setHTML(`<a href="${esc(t.url)}">${esc(t.nama)}</a><br><span>${esc(t.kategori)}</span>`);
+      new maplibregl.Marker({ element: dot }).setLngLat([t.lon, t.lat]).setPopup(popup).addTo(map);
+    });
+  });
+</script>

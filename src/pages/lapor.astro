@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { LAPOR_FORM_URL, SITE } from '../config';
+---
+<Base judul="Lapor" halaman="lapor">
+  <div class="prosa">
+    <h1>Lapor perubahan di jalan</h1>
+    <p>Bantu jaga data tetap akurat. Laporkan jalan rusak, ruas yang sering banjir, tempat yang sudah tutup, atau usulan checkpoint baru. Setiap laporan dicek dulu oleh tim {SITE.oleh} sebelum masuk ke peta.</p>
+    {LAPOR_FORM_URL
+      ? <p><a class="tombol" href={LAPOR_FORM_URL} target="_blank" rel="noopener">Buka formulir laporan</a></p>
+      : <p class="peringatan">Formulir laporan sedang disiapkan. Sementara ini, sampaikan laporan langsung ke pengurus {SITE.oleh}.</p>}
+  </div>
+</Base>

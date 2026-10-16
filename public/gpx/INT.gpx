@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="PegiPeda" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Jalur Inti Sudirman–Thamrin (draft)</name>
+    <desc>DRAFT: garis kasar antar titik, belum digowes dan belum mengikuti jalan. Ganti file ini dengan rekaman GPX hasil survei.</desc>
+  </metadata>
+  <trk>
+    <name>Jalur Inti Sudirman–Thamrin (draft)</name>
+    <trkseg>
+      <trkpt lat="-6.2272" lon="106.8017"></trkpt>
+      <trkpt lat="-6.225" lon="106.804"></trkpt>
+      <trkpt lat="-6.2224" lon="106.8082"></trkpt>
+      <trkpt lat="-6.2196" lon="106.8137"></trkpt>
+      <trkpt lat="-6.216" lon="106.8165"></trkpt>
+      <trkpt lat="-6.2118" lon="106.818"></trkpt>
+      <trkpt lat="-6.206" lon="106.8205"></trkpt>
+      <trkpt lat="-6.201" lon="106.8228"></trkpt>
+      <trkpt lat="-6.195" lon="106.823"></trkpt>
+      <trkpt lat="-6.1919" lon="106.823"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

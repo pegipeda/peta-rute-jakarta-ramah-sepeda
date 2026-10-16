@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import skematik from '../assets/peta-skematik.svg?raw';
+import { loadData, jalurSlug } from '../lib/data';
+import { readGpx } from '../lib/gpx';
+
+const { checkpoints, jalur } = await loadData();
+const daftar = jalur.map((j) => ({
+  ...j,
+  gpx: readGpx(j.id),
+  jumlah: checkpoints.filter((c) => c.jalur === j.id).length,
+}));
+---
+<Base halaman="peta">
+  <div class="prosa">
+    <h1>Rute ramah sepeda di Jabodetabek</h1>
+    <p class="redup">Pilih jalur untuk melihat rute, tempat singgah, dan stasiun yang bisa dinaiki bersama sepeda. File GPX tersedia di setiap jalur.</p>
+  </div>
+
+  <div class="skematik" set:html={skematik} />
+
+  <h2>Jalur</h2>
+  <ul class="daftar-jalur">
+    {daftar.map((j) => (
+      <li>
+        <a href={`/jalur/${jalurSlug(j.id)}/`}>
+          <span class="warna" style={`background:${j.warna}`}></span>
+          <span>
+            <b>{j.nama}</b> {j.status === 'Draft' && <span class="chip draft">Draft</span>}
+            <span class="rute" style="display:block">{j.dari} – {j.ke}</span>
+          </span>
+          <span class="angka">
+            {j.gpx ? `${j.gpx.jarakKm.toLocaleString('id-ID')} km` : '—'}
+            <span class="redup kecil" style="display:block;font-weight:400">{j.jumlah} checkpoint</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<script>
+  // Grup <g id="jalur-KODE"> di peta skematik menjadi tautan ke halaman jalur.
+  document.querySelectorAll<SVGGElement>('.skematik [id^="jalur-"]').forEach((g) => {
+    const kode = g.id.replace('jalur-', '').toLowerCase();
+    const pergi = () => { location.href = `/jalur/${kode}/`; };
+    g.setAttribute('role', 'link');
+    g.setAttribute('tabindex', '0');
+    g.addEventListener('click', pergi);
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter') pergi(); });
+  });
+</script>

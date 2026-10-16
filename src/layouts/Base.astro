@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import { SITE, FITUR } from '../config';
+
+interface Props { judul?: string; deskripsi?: string; halaman?: string }
+const { judul, deskripsi = SITE.deskripsi, halaman } = Astro.props;
+const title = judul ? `${judul} · ${SITE.nama}` : `${SITE.nama} · ${SITE.oleh}`;
+const nav = [
+  { href: '/', label: 'Peta', id: 'peta' },
+  { href: '/panduan/', label: 'Panduan', id: 'panduan' },
+  ...(FITUR.lapor ? [{ href: '/lapor/', label: 'Lapor', id: 'lapor' }] : []),
+];
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={deskripsi} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={deskripsi} />
+    <meta name="theme-color" content="#1F5C63" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="kepala">
+      <div class="wrap">
+        <a class="merek" href="/">
+          <span class="merek-tanda" aria-hidden="true"></span>
+          <span><b>{SITE.nama}</b><span>oleh {SITE.oleh}</span></span>
+        </a>
+        <nav class="nav" aria-label="Utama">
+          {nav.map((n) => (
+            <a href={n.href} aria-current={halaman === n.id ? 'page' : undefined}>{n.label}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+    <main class="wrap">
+      <slot />
+    </main>
+    <footer class="kaki">
+      <div class="wrap">
+        <p>Rute di sini ramah pesepeda, bukan berarti bebas risiko. Jalan dipakai bersama, jadi tetap waspada.</p>
+        <p>Data checkpoint dikelola komunitas {SITE.oleh}. Peta dasar © OpenStreetMap contributors.</p>
+      </div>
+    </footer>
+  </body>
+</html>

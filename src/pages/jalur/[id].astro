@@ -101,7 +101,7 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
 
   {adaDraft && (
     <div class="peringatan">
-      <p><b>Rute ini masih draft.</b> Garisnya belum mengikuti jalan dan belum digowes untuk verifikasi, jadi jangan dipakai untuk navigasi dulu.</p>
+      <p><b>Rute ini masih draft.</b> Garisnya dibuat otomatis dari data peta dan belum digowes untuk verifikasi. Pakai sebagai gambaran dulu, bukan panduan navigasi.</p>
     </div>
   )}
 
@@ -120,6 +120,7 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
       <p class="prosa">{o.ringkas}</p>
       <dl class="statistik">
         <div><dt>Jarak gowes{o.draft ? ' (perkiraan)' : ''}</dt><dd>{fmtKm(o.jarakGowesKm)}</dd></div>
+        <div><dt>Total tanjakan</dt><dd>{o.tanjakanM != null ? `${o.tanjakanM} m` : '—'}</dd></div>
         <div><dt>Sepeda</dt><dd style="font-size:1rem;padding-top:6px">{o.sepeda}</dd></div>
         <div><dt>Tempat singgah</dt><dd>{singgah.length}</dd></div>
       </dl>

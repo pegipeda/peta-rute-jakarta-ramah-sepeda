@@ -41,11 +41,17 @@ export function readGpx(namaFile: string): GpxInfo | null {
   let jarak = 0;
   for (let i = 1; i < coords.length; i++) jarak += haversine(coords[i - 1], coords[i]);
   let gain: number | null = null;
-  if (eles.length === coords.length && eles.length > 1) {
+  // BRouter menulis total tanjakan yang sudah disaring di komentar file. Pakai itu kalau ada.
+  const brouter = /filtered ascend = (\d+)/.exec(xml);
+  if (brouter) gain = Number(brouter[1]);
+  else if (eles.length === coords.length && eles.length > 1) {
+    // Hanya menghitung kenaikan yang lebih dari 5 m, supaya derau data
+    // ketinggian tidak terhitung sebagai tanjakan.
     gain = 0;
-    for (let i = 1; i < eles.length; i++) {
-      const d = eles[i] - eles[i - 1];
-      if (d > 0) gain += d;
+    let acuan = eles[0];
+    for (const e of eles) {
+      if (e - acuan >= 5) { gain += e - acuan; acuan = e; }
+      else if (e < acuan) acuan = e;
     }
   }
   const nama = /<name>([^<]*)<\/name>/.exec(xml)?.[1] ?? namaFile;

@@ -1,3 +1,3 @@
 ID,Nama jalur,Arah,Dari,Ke,Warna,Status,Catatan
 INT,Jalur Inti Sudirman–Thamrin,Pusat,Bundaran Senayan,Bundaran HI,,Data awal,"Mengikuti jalur sepeda terproteksi permanen Sudirman–Thamrin (11,2 km). Pusat jaringan, tempat semua jalur radial bertemu."
-TGS,Jalur Tangsel,Barat daya,BSD,Bundaran Senayan,,Draft,"Koridor BSD–Bintaro–Lebak Bulus–Fatmawati–Blok M. Opsi transum untuk sepeda non-lipat: gowes sampai MRT Lebak Bulus, lalu MRT ke Blok M, Istora, atau Bundaran HI. Untuk sepeda lipat ada tambahan KRL lin Rangkasbitung dari Stasiun Rawa Buntu atau Serpong ke Tanah Abang."
+TGS,Jalur Tangsel,Barat daya,BSD,Bundaran Senayan,,Draft,"Mulai dari Taman Kota 1 BSD. Rute gowes penuh draft lewat Jombang, Ciputat, Lebak Bulus, Fatmawati, dan Blok M. Opsi transum untuk sepeda non-lipat: gowes sampai MRT Lebak Bulus, lalu MRT ke Blok M, Istora, atau Bundaran HI. Untuk sepeda lipat ada tambahan KRL lin Rangkasbitung dari Stasiun Rawa Buntu atau Serpong ke Tanah Abang."

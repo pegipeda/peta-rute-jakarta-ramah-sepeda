@@ -40,11 +40,11 @@ File GPX yang dipakai Jalur Tangsel:
 
 | File | Isi |
 |---|---|
-| `TGS-gowes.gpx` | BSD sampai Bundaran Senayan, gowes penuh |
-| `TGS-ke-lebakbulus.gpx` | BSD sampai Stasiun MRT Lebak Bulus |
+| `TGS-gowes.gpx` | Taman Kota 1 BSD sampai Bundaran Senayan, gowes penuh |
+| `TGS-ke-lebakbulus.gpx` | Taman Kota 1 BSD sampai Stasiun MRT Lebak Bulus |
 | `TGS-tanahabang-sudirman.gpx` | Stasiun Tanah Abang sampai Sudirman |
 
-Jarak dan total tanjakan dihitung otomatis dari GPX. Semua file sekarang masih **draft** (garis kasar lewat jalan utama, belum mengikuti jalan). Ganti dengan GPX yang mengikuti jalan dari Komoot, Strava, atau RideWithGPS, dengan nama file yang sama. Selama di dalam file masih ada kata `DRAFT`, halaman jalur menampilkan peringatan draft.
+Jarak dan total tanjakan dihitung otomatis dari GPX. Semua file sekarang masih **draft**: dibuat otomatis dengan [BRouter](https://brouter.de) (profil sepeda *trekking*, data OpenStreetMap), sudah mengikuti jalan tapi belum digowes. Setelah rute disurvei, ganti dengan rekaman GPX dari Strava, Komoot, atau Garmin, dengan nama file yang sama. Selama di dalam file masih ada kata `DRAFT`, halaman jalur menampilkan peringatan draft.
 
 ### Peta skematik
 

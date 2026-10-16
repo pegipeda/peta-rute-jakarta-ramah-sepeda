@@ -13,7 +13,7 @@ export type Stasiun = { nama: string; lat: number; lon: number; cpId?: string; n
 export type Ruas =
   | { jenis: 'gowes'; gpx: string; dari: string; ke: string; coords: [number, number][]; jarakKm: number; tanjakanM: number | null; draft: boolean }
   | { jenis: 'kereta'; moda: string; catatan?: string; stasiun: Stasiun[]; coords: [number, number][] };
-export type Opsi = { id: string; nama: string; sepeda: string; ringkas: string; ruas: Ruas[]; jarakGowesKm: number; draft: boolean };
+export type Opsi = { id: string; nama: string; sepeda: string; ringkas: string; ruas: Ruas[]; jarakGowesKm: number; tanjakanM: number | null; draft: boolean };
 
 const semua: Record<string, OpsiMentah[]> = JSON.parse(fs.readFileSync(path.resolve('data/opsi.json'), 'utf8'));
 
@@ -39,6 +39,7 @@ export function opsiJalur(jalurId: string, checkpoints: Checkpoint[]): Opsi[] {
       ...o,
       ruas,
       jarakGowesKm: Math.round(gowes.reduce((a, r) => a + r.jarakKm, 0) * 10) / 10,
+      tanjakanM: gowes.every((r) => r.tanjakanM !== null) ? gowes.reduce((a, r) => a + (r.tanjakanM ?? 0), 0) : null,
       draft: gowes.some((r) => r.draft),
     };
   });

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="PegiPeda" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Jalur Tangsel, Stasiun Tanah Abang ke Sudirman (draft)</name>
+    <desc>DRAFT: garis kasar lewat jalan utama, belum mengikuti jalan dan belum digowes. Ganti file ini dengan GPX yang mengikuti jalan.</desc>
+  </metadata>
+  <trk>
+    <name>Jalur Tangsel, Stasiun Tanah Abang ke Sudirman (draft)</name>
+    <trkseg>
+      <trkpt lat="-6.1855" lon="106.8107"></trkpt>
+      <trkpt lat="-6.19" lon="106.814"></trkpt>
+      <trkpt lat="-6.196" lon="106.8185"></trkpt>
+      <trkpt lat="-6.201" lon="106.8228"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

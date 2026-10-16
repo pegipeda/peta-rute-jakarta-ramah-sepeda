@@ -32,3 +32,17 @@ export function urutkanSepanjangRute(cps: Checkpoint[], coords: [number, number]
   diRute.sort((a, b) => a.posisi - b.posisi);
   return { diRute: diRute.map((d) => d.cp), diLuar };
 }
+
+// Titik cabang: titik terdekat di garis rute menuju sebuah tempat,
+// dipakai untuk mengarahkan pesepeda dari rute utama ke kafe atau bengkel.
+export function titikCabang(lon: number, lat: number, coords: [number, number][]) {
+  let terbaik = { jarakKm: Infinity, titik: coords[0] ?? [lon, lat] as [number, number] };
+  for (let i = 1; i < coords.length; i++) {
+    const a = coords[i - 1], b = coords[i];
+    const r = jarakKeRuas([lon, lat], a, b);
+    if (r.jarak < terbaik.jarakKm) {
+      terbaik = { jarakKm: r.jarak, titik: [a[0] + (b[0] - a[0]) * r.t, a[1] + (b[1] - a[1]) * r.t] };
+    }
+  }
+  return terbaik;
+}

@@ -16,7 +16,8 @@ Kata yang dipakai adalah **ramah**, bukan aman. Jalan dipakai bersama, jadi pese
 |---|---|---|
 | Checkpoint (tambah, edit, tutup) | Google Sheet, tab **Checkpoint** | Tidak |
 | Info jalur (nama, warna, status) | Google Sheet, tab **Jalur** | Tidak |
-| Garis rute | Ganti file `public/gpx/KODE.gpx` | Tidak, cukup unggah file |
+| Garis rute | Ganti file di `public/gpx/` | Tidak, cukup unggah file |
+| Pilihan perjalanan (gowes penuh, gowes + MRT, KRL + gowes) | `data/opsi.json` | Sedikit |
 | Peta skematik beranda | Ganti file `src/assets/peta-skematik.svg` | Tidak |
 | Warna dan huruf web | `src/styles/global.css`, bagian paling atas | Sedikit |
 | Nyala/mati fitur | `src/config.ts`, bagian `FITUR` | Sedikit |
@@ -31,9 +32,19 @@ Untuk memperbarui salinan itu: `npm run sync-data`.
 
 ID seperti `TGS-07` menjadi alamat halaman `/cp/tgs-07/` dan dicetak di QR. **Jangan pernah mengubah atau memakai ulang ID.** Kalau tempatnya tutup, ubah statusnya menjadi *Tutup permanen*; halamannya hilang dari web, tapi ID-nya tetap tidak dipakai lagi.
 
-### File GPX
+### Pilihan perjalanan dan file GPX
 
-Jarak dan total tanjakan dihitung otomatis dari GPX. File sekarang masih **draft** (garis kasar antar titik, belum mengikuti jalan). Ganti dengan rekaman hasil survei dari Strava, Komoot, atau Garmin, dengan nama file sesuai kode jalur (`TGS.gpx`, `INT.gpx`). Selama di dalam file masih ada kata `DRAFT`, halaman jalur menampilkan peringatan draft.
+Setiap jalur punya satu atau lebih pilihan perjalanan di `data/opsi.json`. Satu pilihan terdiri dari ruas **gowes** (menunjuk file GPX) dan ruas **kereta** (daftar stasiun). Kafe dan bengkel bukan bagian dari rute: web otomatis menampilkannya sebagai tempat singgah kalau letaknya dalam 2 km dari ruas gowes, lengkap dengan titik cabang dan tombol "Arahkan dari rute".
+
+File GPX yang dipakai Jalur Tangsel:
+
+| File | Isi |
+|---|---|
+| `TGS-gowes.gpx` | BSD sampai Bundaran Senayan, gowes penuh |
+| `TGS-ke-lebakbulus.gpx` | BSD sampai Stasiun MRT Lebak Bulus |
+| `TGS-tanahabang-sudirman.gpx` | Stasiun Tanah Abang sampai Sudirman |
+
+Jarak dan total tanjakan dihitung otomatis dari GPX. Semua file sekarang masih **draft** (garis kasar lewat jalan utama, belum mengikuti jalan). Ganti dengan GPX yang mengikuti jalan dari Komoot, Strava, atau RideWithGPS, dengan nama file yang sama. Selama di dalam file masih ada kata `DRAFT`, halaman jalur menampilkan peringatan draft.
 
 ### Peta skematik
 

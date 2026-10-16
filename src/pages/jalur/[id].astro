@@ -2,8 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import Peta from '../../components/Peta.astro';
 import { loadData, jalurSlug, cpSlug } from '../../lib/data';
-import { readGpx } from '../../lib/gpx';
-import { urutkanSepanjangRute } from '../../lib/urutan';
+import { opsiJalur, type Opsi, type Ruas } from '../../lib/opsi';
+import { titikCabang } from '../../lib/urutan';
 
 export async function getStaticPaths() {
   const { jalur } = await loadData();
@@ -13,82 +13,190 @@ export async function getStaticPaths() {
 const { jalurId } = Astro.props;
 const { checkpoints, jalur } = await loadData();
 const j = jalur.find((x) => x.id === jalurId)!;
-const gpx = readGpx(j.id);
-const milik = checkpoints.filter((c) => c.jalur === j.id);
-const { diRute, diLuar } = gpx ? urutkanSepanjangRute(milik, gpx.coords) : { diRute: milik, diLuar: [] };
-const draft = j.status === 'Draft' || gpx?.draft;
-const transit = diRute.filter((c) => c.kategori === 'Transit');
+const opsi = opsiJalur(j.id, checkpoints);
+
+// Tempat singgah: checkpoint bukan stasiun yang berada dekat ruas gowes.
+const BATAS_SINGGAH_KM = 2;
+const kandidatSinggah = checkpoints.filter((c) => c.kategori !== 'Transit');
+
+const fmtKm = (km: number) => `${km.toLocaleString('id-ID', { maximumFractionDigits: 1 })} km`;
+const fmtJarak = (m: number) => (m < 1000 ? `± ${Math.round(m / 50) * 50} m` : `± ${(m / 1000).toLocaleString('id-ID', { maximumFractionDigits: 1 })} km`);
+const arahkan = (dari: [number, number], lat: number, lon: number) =>
+  `https://www.google.com/maps/dir/?api=1&origin=${dari[1]},${dari[0]}&destination=${lat},${lon}&travelmode=bicycling`;
+
+type Titik = { nama: string; url?: string; ujung?: boolean; transit?: boolean; meta: string[]; seg: 'gowes' | 'kereta' | null };
+
+function susunLin(o: Opsi): Titik[] {
+  const out: Titik[] = [];
+  const tambah = (t: Titik) => {
+    const akhir = out[out.length - 1];
+    const sama = akhir && akhir.nama.replace(/^Stasiun (MRT )?/, '').toLowerCase() === t.nama.replace(/^Stasiun (MRT )?/, '').toLowerCase();
+    if (sama) { akhir.meta.push(...t.meta); akhir.seg = t.seg; akhir.transit ||= t.transit; akhir.url ||= t.url; }
+    else out.push(t);
+  };
+  o.ruas.forEach((r: Ruas) => {
+    if (r.jenis === 'gowes') {
+      tambah({ nama: r.dari, meta: [`Gowes ${fmtKm(r.jarakKm)} sampai ${r.ke}`], seg: 'gowes' });
+      tambah({ nama: r.ke, meta: [], seg: null });
+    } else {
+      const s = r.stasiun;
+      const lewat = s.length - 2;
+      const keluarLain = s.slice(1, -1).filter((x) => x.nonLipat).map((x) => x.nama.replace(/^Stasiun (MRT )?/, ''));
+      tambah({ nama: s[0].nama, url: s[0].cpId ? `/cp/${cpSlug(s[0].cpId)}/` : undefined, transit: true,
+        meta: [`Naik ${r.moda}${lewat > 0 ? `, melewati ${lewat} stasiun` : ''}`, ...(keluarLain.length ? [`Bisa juga turun di ${keluarLain.join(', ')}`] : [])], seg: 'kereta' });
+      const z = s[s.length - 1];
+      tambah({ nama: z.nama, url: z.cpId ? `/cp/${cpSlug(z.cpId)}/` : undefined, transit: true, meta: ['Turun di sini'], seg: null });
+    }
+  });
+  if (out.length) { out[0].ujung = true; out[out.length - 1].ujung = true; }
+  return out;
+}
+
+const panel = opsi.map((o) => {
+  const gowesCoords = o.ruas.filter((r) => r.jenis === 'gowes').map((r) => r.coords);
+  const singgah = kandidatSinggah
+    .map((c) => {
+      let terbaik = { jarakKm: Infinity, titik: [c.lon, c.lat] as [number, number] };
+      for (const coords of gowesCoords) {
+        const t = titikCabang(c.lon, c.lat, coords);
+        if (t.jarakKm < terbaik.jarakKm) terbaik = t;
+      }
+      return { c, ...terbaik };
+    })
+    .filter((s) => s.jarakKm <= BATAS_SINGGAH_KM)
+    .sort((a, b) => a.jarakKm - b.jarakKm);
+  const lin = susunLin(o);
+  const stasiunTitik = o.ruas.flatMap((r) => (r.jenis === 'kereta' ? [r.stasiun[0], r.stasiun[r.stasiun.length - 1]] : []));
+  const awal = o.ruas[0], akhir = o.ruas[o.ruas.length - 1];
+  const ujungTitik = [
+    ...(awal.jenis === 'gowes' ? [{ nama: awal.dari, lon: awal.coords[0]?.[0], lat: awal.coords[0]?.[1] }] : []),
+    ...(akhir.jenis === 'gowes' ? [{ nama: akhir.ke, lon: akhir.coords.at(-1)?.[0], lat: akhir.coords.at(-1)?.[1] }] : []),
+  ].filter((t) => t.lon !== undefined);
+  return {
+    o, lin, singgah,
+    peta: {
+      garis: o.ruas.map((r) => ({ coords: r.coords, warna: r.jenis === 'gowes' ? j.warna : '#16201f', putus: r.jenis === 'kereta' })),
+      titik: [
+        ...ujungTitik.map((t) => ({ nama: t.nama, kategori: 'Titik awal / akhir', lat: t.lat!, lon: t.lon!, jenis: 'utama' as const })),
+        ...stasiunTitik.map((s) => ({ nama: s.nama, kategori: 'Transit', lat: s.lat, lon: s.lon, url: s.cpId ? `/cp/${cpSlug(s.cpId)}/` : undefined, jenis: 'utama' as const })),
+        ...singgah.map((s) => ({
+          nama: s.c.nama, kategori: s.c.kategoriLain ? `${s.c.kategori} · ${s.c.kategoriLain}` : s.c.kategori,
+          lat: s.c.lat, lon: s.c.lon, url: `/cp/${cpSlug(s.c.id)}/`, jenis: 'singgah' as const,
+          cabang: { titik: s.titik, jarakM: s.jarakKm * 1000, arahkan: arahkan(s.titik, s.c.lat, s.c.lon) },
+        })),
+      ],
+    },
+  };
+});
+const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
 ---
-<Base judul={j.nama} deskripsi={`${j.nama}: ${j.dari} – ${j.ke}. Rute, checkpoint, dan file GPX.`}>
-  <div class="judul-jalur" style={`--warna-lin:${j.warna}`}>
+<Base judul={j.nama} deskripsi={`${j.nama}: ${j.dari} – ${j.ke}. Pilihan gowes penuh atau kombinasi transportasi umum, dengan file GPX.`}>
+  <div class="judul-jalur">
     <span class="warna" style={`background:${j.warna}`}></span>
     <div>
       <h1>{j.nama}</h1>
-      <p class="redup" style="margin:0">{j.dari} – {j.ke} {draft && <span class="chip draft">Draft</span>}</p>
+      <p class="redup" style="margin:0">{j.dari} – {j.ke} {adaDraft && <span class="chip draft">Draft</span>}</p>
     </div>
   </div>
 
-  {draft && (
+  {adaDraft && (
     <div class="peringatan">
       <p><b>Rute ini masih draft.</b> Garisnya belum mengikuti jalan dan belum digowes untuk verifikasi, jadi jangan dipakai untuk navigasi dulu.</p>
     </div>
   )}
 
-  <dl class="statistik">
-    <div><dt>Jarak{draft ? ' (perkiraan)' : ''}</dt><dd>{gpx ? `${gpx.jarakKm.toLocaleString('id-ID')} km` : '—'}</dd></div>
-    <div><dt>Total tanjakan</dt><dd>{gpx?.tanjakanM != null ? `${gpx.tanjakanM} m` : '—'}</dd></div>
-    <div><dt>Checkpoint</dt><dd>{diRute.length}</dd></div>
-    <div><dt>Stasiun boleh sepeda non-lipat</dt><dd>{transit.filter((t) => t.sepedaNonLipat === 'Ya').length}</dd></div>
-  </dl>
+  {opsi.length > 1 && (
+    <div class="tab" role="tablist" aria-label="Pilihan perjalanan">
+      {opsi.map((o, i) => (
+        <button role="tab" id={`tab-${o.id}`} aria-controls={`panel-${o.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
+          <b>{o.nama}</b><span>{o.sepeda}</span>
+        </button>
+      ))}
+    </div>
+  )}
 
-  <p style="display:flex;gap:10px;flex-wrap:wrap">
-    {gpx && <a class="tombol" href={`/gpx/${j.id}.gpx`} download={`${j.id}.gpx`}>Unduh GPX</a>}
-    <a class="tombol garis" href="/panduan/#transum">Aturan bawa sepeda di transum</a>
-  </p>
-
-  <div class="tata-jalur" style={`--warna-lin:${j.warna}`}>
-    <div>
-      {j.catatan && (
-        <div class="kotak">
-          <h3>Pilihan perjalanan</h3>
-          <p style="margin:0">{j.catatan}</p>
-        </div>
-      )}
-
-      <h2>Sepanjang jalur</h2>
-      <ol class="lin">
-        <li class="ujung"><span class="titik"></span><span class="ujung-label">{j.dari}</span></li>
-        {diRute.map((c) => (
-          <li>
-            <span class:list={['titik', { transit: c.kategori === 'Transit' }]}></span>
-            <a href={`/cp/${cpSlug(c.id)}/`}>{c.nama}</a>
-            <span class="meta">
-              {c.kategori}{c.kategoriLain ? ` · ${c.kategoriLain}` : ''}
-              {c.kategori === 'Transit' && c.sepedaNonLipat === 'Ya' ? ' · boleh sepeda non-lipat' : ''}
-            </span>
-            {c.jamBuka && <span class="meta">{c.jamBuka}</span>}
-          </li>
+  {panel.map(({ o, lin, singgah, peta }, i) => (
+    <section class="panel-opsi" role={opsi.length > 1 ? 'tabpanel' : undefined} id={`panel-${o.id}`} aria-labelledby={opsi.length > 1 ? `tab-${o.id}` : undefined} hidden={i !== 0}>
+      <p class="prosa">{o.ringkas}</p>
+      <dl class="statistik">
+        <div><dt>Jarak gowes{o.draft ? ' (perkiraan)' : ''}</dt><dd>{fmtKm(o.jarakGowesKm)}</dd></div>
+        <div><dt>Sepeda</dt><dd style="font-size:1rem;padding-top:6px">{o.sepeda}</dd></div>
+        <div><dt>Tempat singgah</dt><dd>{singgah.length}</dd></div>
+      </dl>
+      <p style="display:flex;gap:10px;flex-wrap:wrap">
+        {o.ruas.filter((r) => r.jenis === 'gowes').map((r) => (
+          <a class="tombol" href={`/gpx/${r.gpx}`} download={r.gpx}>
+            Unduh GPX{o.ruas.filter((x) => x.jenis === 'gowes').length > 1 || o.ruas.length > 1 ? `: ${r.dari} – ${r.ke}` : ''}
+          </a>
         ))}
-        <li class="ujung"><span class="titik"></span><span class="ujung-label">{j.ke}</span></li>
-      </ol>
+        {o.ruas.some((r) => r.jenis === 'kereta') && <a class="tombol garis" href="/panduan/#transum">Aturan bawa sepeda di transum</a>}
+      </p>
 
-      {diLuar.length > 0 && (
-        <div class="kotak">
-          <h3>Di luar rute</h3>
-          <p class="redup kecil">Masih tercatat di jalur ini, tapi letaknya lebih dari 1,5 km dari garis rute.</p>
-          <ul style="margin:0;padding-left:18px">
-            {diLuar.map((c) => <li><a href={`/cp/${cpSlug(c.id)}/`}>{c.nama}</a> <span class="redup kecil">{c.wilayah}</span></li>)}
-          </ul>
+      <div class="tata-jalur" style={`--warna-lin:${j.warna}`}>
+        <div>
+          <h2>Urutan perjalanan</h2>
+          <ol class="lin">
+            {lin.map((t) => (
+              <li class:list={[{ ujung: t.ujung }, t.seg ? `seg-${t.seg}` : 'seg-akhir']}>
+                <span class:list={['titik', { transit: t.transit }]}></span>
+                {t.url ? <a href={t.url}>{t.nama}</a> : <span class="ujung-label">{t.nama}</span>}
+                {t.meta.map((m) => <span class="meta">{m}</span>)}
+              </li>
+            ))}
+          </ol>
+          {o.ruas.filter((r) => r.jenis === 'kereta' && r.catatan).map((r) => (
+            <p class="kecil redup">{(r as any).catatan}</p>
+          ))}
+
+          <h2 style="margin-top:28px">Singgah di sekitar rute</h2>
+          {singgah.length === 0
+            ? <p class="redup kecil">Belum ada tempat singgah yang tercatat di dekat ruas gowes opsi ini.</p>
+            : (
+              <ul class="singgah">
+                {singgah.map((s) => (
+                  <li>
+                    <a href={`/cp/${cpSlug(s.c.id)}/`}>{s.c.nama}</a>
+                    <span class="meta">{s.c.kategori}{s.c.kategoriLain ? ` · ${s.c.kategoriLain}` : ''} · {fmtJarak(s.jarakKm * 1000)} dari rute</span>
+                    {s.c.jamBuka && <span class="meta">{s.c.jamBuka}</span>}
+                    <a class="kecil" href={arahkan(s.titik, s.c.lat, s.c.lon)} target="_blank" rel="noopener">Arahkan dari rute</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          <p class="kecil redup">Tempat singgah bukan bagian dari rute. Ikuti rute utama, lalu belok ke tempat tujuan dari titik cabang terdekat.</p>
         </div>
-      )}
-    </div>
 
-    <div class="peta-wrap">
-      <Peta
-        label={`Peta ${j.nama}`}
-        garis={gpx ? [{ coords: gpx.coords, warna: j.warna }] : []}
-        titik={diRute.map((c) => ({ id: c.id, nama: c.nama, kategori: c.kategori, lat: c.lat, lon: c.lon, url: `/cp/${cpSlug(c.id)}/` }))}
-      />
-    </div>
-  </div>
+        <div class="peta-wrap">
+          <Peta label={`Peta ${j.nama}, ${o.nama}`} garis={peta.garis} titik={peta.titik} />
+        </div>
+      </div>
+    </section>
+  ))}
 </Base>
+
+<script>
+  // Tab pilihan perjalanan. Peta di panel yang baru tampil perlu diukur ulang.
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tab [role="tab"]')];
+  const pilih = (tab: HTMLButtonElement) => {
+    tabs.forEach((t) => {
+      const aktif = t === tab;
+      t.setAttribute('aria-selected', String(aktif));
+      t.tabIndex = aktif ? 0 : -1;
+      const panel = document.getElementById(t.getAttribute('aria-controls')!)!;
+      panel.hidden = !aktif;
+      if (aktif) {
+        const el = panel.querySelector<HTMLElement>('[data-peta]') as any;
+        setTimeout(() => { el?._peta?.resize(); el?._paskan?.(); }, 60);
+      }
+    });
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => pilih(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        n.focus(); pilih(n);
+      }
+    });
+  });
+</script>

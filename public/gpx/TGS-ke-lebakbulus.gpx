@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="PegiPeda" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Jalur Tangsel, BSD ke MRT Lebak Bulus (draft)</name>
+    <desc>DRAFT: garis kasar lewat jalan utama, belum mengikuti jalan dan belum digowes. Ganti file ini dengan GPX yang mengikuti jalan.</desc>
+  </metadata>
+  <trk>
+    <name>Jalur Tangsel, BSD ke MRT Lebak Bulus (draft)</name>
+    <trkseg>
+      <trkpt lat="-6.301" lon="106.653"></trkpt>
+      <trkpt lat="-6.2985" lon="106.672"></trkpt>
+      <trkpt lat="-6.288" lon="106.695"></trkpt>
+      <trkpt lat="-6.279" lon="106.718"></trkpt>
+      <trkpt lat="-6.275" lon="106.74"></trkpt>
+      <trkpt lat="-6.284" lon="106.762"></trkpt>
+      <trkpt lat="-6.2893" lon="106.7757"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

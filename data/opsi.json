@@ -1,0 +1,72 @@
+{
+  "_catatan": "Opsi perjalanan per jalur. Ruas 'gowes' menunjuk file di public/gpx. Ruas 'kereta' berisi daftar stasiun: pakai ID checkpoint (misalnya TGS-04) kalau stasiun itu ada di sheet, atau tulis nama dan koordinatnya. Garis kereta di peta hanya penanda, bukan rel sebenarnya.",
+  "INT": [
+    {
+      "id": "gowes",
+      "nama": "Gowes penuh",
+      "sepeda": "Semua jenis sepeda",
+      "ringkas": "Jalur sepeda terproteksi di sepanjang Sudirman–Thamrin.",
+      "ruas": [
+        { "jenis": "gowes", "gpx": "INT.gpx", "dari": "Bundaran Senayan", "ke": "Bundaran HI" }
+      ]
+    }
+  ],
+  "TGS": [
+    {
+      "id": "gowes",
+      "nama": "Gowes penuh",
+      "sepeda": "Semua jenis sepeda",
+      "ringkas": "Dari BSD lewat Bintaro, Lebak Bulus, Fatmawati, dan Blok M sampai Bundaran Senayan.",
+      "ruas": [
+        { "jenis": "gowes", "gpx": "TGS-gowes.gpx", "dari": "BSD", "ke": "Bundaran Senayan" }
+      ]
+    },
+    {
+      "id": "mrt",
+      "nama": "Gowes + MRT",
+      "sepeda": "Sepeda non-lipat dan lipat",
+      "ringkas": "Gowes dari BSD ke MRT Lebak Bulus, lalu naik MRT. Turun di Istora untuk Senayan, atau lanjut ke Bundaran HI.",
+      "ruas": [
+        { "jenis": "gowes", "gpx": "TGS-ke-lebakbulus.gpx", "dari": "BSD", "ke": "Stasiun MRT Lebak Bulus" },
+        {
+          "jenis": "kereta",
+          "moda": "MRT Jakarta",
+          "catatan": "Sepeda non-lipat hanya boleh naik dan turun di Lebak Bulus, Blok M, Istora, dan Bundaran HI.",
+          "stasiun": [
+            "TGS-04",
+            { "nama": "Fatmawati", "lat": -6.2924, "lon": 106.7925 },
+            { "nama": "Cipete Raya", "lat": -6.2784, "lon": 106.7975 },
+            { "nama": "Haji Nawi", "lat": -6.2666, "lon": 106.7973 },
+            { "nama": "Blok A", "lat": -6.2557, "lon": 106.7971 },
+            "TGS-06",
+            { "nama": "ASEAN", "lat": -6.2387, "lon": 106.7984 },
+            { "nama": "Senayan", "lat": -6.2268, "lon": 106.8024 },
+            "INT-01"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "krl",
+      "nama": "KRL + gowes",
+      "sepeda": "Sepeda lipat saja",
+      "ringkas": "Naik KRL lin Rangkasbitung dari Rawa Buntu ke Tanah Abang dengan sepeda terlipat, lalu gowes ke Sudirman.",
+      "ruas": [
+        {
+          "jenis": "kereta",
+          "moda": "KRL lin Rangkasbitung",
+          "catatan": "Sepeda harus dalam keadaan terlipat selama di kereta dan stasiun.",
+          "stasiun": [
+            { "nama": "Stasiun Rawa Buntu", "lat": -6.3156, "lon": 106.6763 },
+            { "nama": "Sudimara", "lat": -6.2972, "lon": 106.7128 },
+            { "nama": "Pondok Ranji", "lat": -6.2765, "lon": 106.7448 },
+            { "nama": "Kebayoran", "lat": -6.2373, "lon": 106.7826 },
+            { "nama": "Palmerah", "lat": -6.2075, "lon": 106.7975 },
+            { "nama": "Stasiun Tanah Abang", "lat": -6.1855, "lon": 106.8107 }
+          ]
+        },
+        { "jenis": "gowes", "gpx": "TGS-tanahabang-sudirman.gpx", "dari": "Stasiun Tanah Abang", "ke": "Jalan Sudirman" }
+      ]
+    }
+  ]
+}

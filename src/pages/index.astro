@@ -2,13 +2,12 @@
 import Base from '../layouts/Base.astro';
 import skematik from '../assets/peta-skematik.svg?raw';
 import { loadData, jalurSlug } from '../lib/data';
-import { readGpx } from '../lib/gpx';
+import { opsiJalur } from '../lib/opsi';
 
 const { checkpoints, jalur } = await loadData();
 const daftar = jalur.map((j) => ({
   ...j,
-  gpx: readGpx(j.id),
-  jumlah: checkpoints.filter((c) => c.jalur === j.id).length,
+  opsi: opsiJalur(j.id, checkpoints),
 }));
 ---
 <Base halaman="peta">
@@ -30,8 +29,8 @@ const daftar = jalur.map((j) => ({
             <span class="rute" style="display:block">{j.dari} – {j.ke}</span>
           </span>
           <span class="angka">
-            {j.gpx ? `${j.gpx.jarakKm.toLocaleString('id-ID')} km` : '—'}
-            <span class="redup kecil" style="display:block;font-weight:400">{j.jumlah} checkpoint</span>
+            {j.opsi[0] ? `${j.opsi[0].jarakGowesKm.toLocaleString('id-ID')} km` : '—'}
+            <span class="redup kecil" style="display:block;font-weight:400">{j.opsi.length} pilihan perjalanan</span>
           </span>
         </a>
       </li>

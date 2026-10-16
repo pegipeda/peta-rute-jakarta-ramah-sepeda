@@ -20,10 +20,10 @@ function haversine(a: [number, number], b: [number, number]) {
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
-// Membaca public/gpx/<ID>.gpx. Jarak dan tanjakan dihitung otomatis,
+// Membaca file di public/gpx (misalnya 'TGS-gowes.gpx'). Jarak dan tanjakan dihitung otomatis,
 // jadi update rute cukup dengan mengganti file GPX-nya.
-export function readGpx(id: string): GpxInfo | null {
-  const file = path.resolve('public/gpx', `${id}.gpx`);
+export function readGpx(namaFile: string): GpxInfo | null {
+  const file = path.resolve('public/gpx', namaFile.endsWith('.gpx') ? namaFile : `${namaFile}.gpx`);
   if (!fs.existsSync(file)) return null;
   const xml = fs.readFileSync(file, 'utf8');
   const pts = [...xml.matchAll(/<(?:trkpt|rtept)\b([^>]*)>([\s\S]*?)<\/(?:trkpt|rtept)>|<(?:trkpt|rtept)\b([^>]*)\/>/g)];
@@ -48,7 +48,7 @@ export function readGpx(id: string): GpxInfo | null {
       if (d > 0) gain += d;
     }
   }
-  const nama = /<name>([^<]*)<\/name>/.exec(xml)?.[1] ?? id;
+  const nama = /<name>([^<]*)<\/name>/.exec(xml)?.[1] ?? namaFile;
   return {
     coords,
     jarakKm: Math.round(jarak * 10) / 10,

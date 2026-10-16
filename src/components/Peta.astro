@@ -1,7 +1,10 @@
 ---
-// Peta interaktif MapLibre. Menerima garis rute dan daftar titik.
-interface Titik { id: string; nama: string; kategori: string; lat: number; lon: number; url: string }
-interface Garis { coords: [number, number][]; warna: string }
+// Peta interaktif MapLibre di atas peta jalan OpenStreetMap.
+// garis: ruas rute (putus = ruas kereta). titik: 'utama' untuk awal, akhir,
+// dan stasiun; 'singgah' untuk kafe/bengkel yang bercabang dari rute.
+interface Cabang { titik: [number, number]; jarakM: number; arahkan: string }
+interface Titik { nama: string; kategori: string; lat: number; lon: number; url?: string; jenis?: 'utama' | 'singgah'; cabang?: Cabang }
+interface Garis { coords: [number, number][]; warna: string; putus?: boolean }
 interface Props { garis?: Garis[]; titik: Titik[]; kecil?: boolean; label: string }
 const { garis = [], titik, kecil = false, label } = Astro.props;
 import { MAP_STYLE } from '../config';
@@ -13,14 +16,10 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
   import maplibregl from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
 
-  const WARNA_KATEGORI: Record<string, string> = {
-    'Transit': '#16201f',
-    'Bengkel': '#D9A21B',
-    'Kopi & rehat': '#1F5C63',
-  };
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  const fmtJarak = (m: number) => (m < 1000 ? `± ${Math.round(m / 50) * 50} m` : `± ${(m / 1000).toFixed(1).replace('.', ',')} km`);
 
-  document.querySelectorAll<HTMLElement>('[data-peta]').forEach((el) => {
+  function buatPeta(el: HTMLElement) {
     const { garis, titik, style } = JSON.parse(el.dataset.peta!);
     const semua: [number, number][] = [
       ...garis.flatMap((g: any) => g.coords),
@@ -34,28 +33,39 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
       cooperativeGestures: true,
       attributionControl: { compact: true },
     });
+    (el as any)._peta = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
-    if (semua.length > 1) {
-      const b = new maplibregl.LngLatBounds(semua[0], semua[0]);
-      semua.forEach((c) => b.extend(c));
-      map.fitBounds(b, { padding: 40, maxZoom: 15, animate: false });
-    } else if (semua.length === 1) {
-      map.setCenter(semua[0]); map.setZoom(15);
-    }
+    const paskan = () => {
+      if (semua.length > 1) {
+        const b = new maplibregl.LngLatBounds(semua[0], semua[0]);
+        semua.forEach((c) => b.extend(c));
+        map.fitBounds(b, { padding: 40, maxZoom: 15, animate: false });
+      } else if (semua.length === 1) { map.setCenter(semua[0]); map.setZoom(15); }
+    };
+    if (el.offsetWidth > 0) paskan();
+    (el as any)._paskan = paskan;
 
     map.on('load', () => {
+      // Garis cabang ke tempat singgah (tipis, putus-putus)
+      const cabang = titik.filter((t: any) => t.cabang).map((t: any) => ({
+        type: 'Feature', properties: {},
+        geometry: { type: 'LineString', coordinates: [t.cabang.titik, [t.lon, t.lat]] },
+      }));
+      if (cabang.length) {
+        map.addSource('cabang', { type: 'geojson', data: { type: 'FeatureCollection', features: cabang } });
+        map.addLayer({ id: 'cabang', type: 'line', source: 'cabang',
+          paint: { 'line-color': '#56625f', 'line-width': 2, 'line-dasharray': [1.5, 1.5] } });
+      }
       garis.forEach((g: any, i: number) => {
-        map.addSource(`garis-${i}`, {
-          type: 'geojson',
-          data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: g.coords } },
-        });
+        map.addSource(`garis-${i}`, { type: 'geojson',
+          data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: g.coords } } });
         map.addLayer({ id: `garis-tepi-${i}`, type: 'line', source: `garis-${i}`,
           layout: { 'line-cap': 'round', 'line-join': 'round' },
-          paint: { 'line-color': '#ffffff', 'line-width': 9 } });
+          paint: { 'line-color': '#ffffff', 'line-width': g.putus ? 6 : 9 } });
         map.addLayer({ id: `garis-${i}`, type: 'line', source: `garis-${i}`,
-          layout: { 'line-cap': 'round', 'line-join': 'round' },
-          paint: { 'line-color': g.warna, 'line-width': 5 } });
+          layout: { 'line-cap': g.putus ? 'butt' : 'round', 'line-join': 'round' },
+          paint: { 'line-color': g.warna, 'line-width': g.putus ? 4 : 5, ...(g.putus ? { 'line-dasharray': [2, 1.5] } : {}) } });
       });
     });
 
@@ -63,17 +73,25 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
       const dot = document.createElement('button');
       dot.type = 'button';
       dot.setAttribute('aria-label', t.nama);
+      const utama = t.jenis !== 'singgah';
       const transit = t.kategori === 'Transit';
       Object.assign(dot.style, {
-        width: '16px', height: '16px', padding: '0', cursor: 'pointer',
+        width: utama ? '18px' : '13px', height: utama ? '18px' : '13px', padding: '0', cursor: 'pointer',
         borderRadius: transit ? '4px' : '50%',
-        background: '#ffffff',
-        border: `4px solid ${WARNA_KATEGORI[t.kategori] ?? '#56625f'}`,
-        boxShadow: '0 0 0 2px #ffffff',
+        background: utama ? '#ffffff' : '#1F5C63',
+        border: utama ? '4px solid #16201f' : '3px solid #ffffff',
+        boxShadow: utama ? '0 0 0 2px #ffffff' : '0 0 0 1px #1F5C63',
       });
-      const popup = new maplibregl.Popup({ offset: 12, closeButton: false })
-        .setHTML(`<a href="${esc(t.url)}">${esc(t.nama)}</a><br><span>${esc(t.kategori)}</span>`);
+      let html = t.url ? `<a href="${esc(t.url)}">${esc(t.nama)}</a>` : `<b>${esc(t.nama)}</b>`;
+      html += `<br><span>${esc(t.kategori)}</span>`;
+      if (t.cabang) {
+        html += `<br><span>${fmtJarak(t.cabang.jarakM)} dari rute</span>`;
+        html += `<br><a href="${esc(t.cabang.arahkan)}" target="_blank" rel="noopener">Arahkan dari rute</a>`;
+      }
+      const popup = new maplibregl.Popup({ offset: 12, closeButton: false }).setHTML(html);
       new maplibregl.Marker({ element: dot }).setLngLat([t.lon, t.lat]).setPopup(popup).addTo(map);
     });
-  });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-peta]').forEach(buatPeta);
 </script>

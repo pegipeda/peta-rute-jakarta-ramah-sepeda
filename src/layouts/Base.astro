@@ -1,14 +1,15 @@
 ---
 import '../styles/global.css';
 import { SITE, FITUR } from '../config';
+import { TEKS, isi } from '../teks';
 
 interface Props { judul?: string; deskripsi?: string; halaman?: string }
 const { judul, deskripsi = SITE.deskripsi, halaman } = Astro.props;
 const title = judul ? `${judul} · ${SITE.nama}` : `${SITE.nama} · ${SITE.oleh}`;
 const nav = [
-  { href: '/', label: 'Peta', id: 'peta' },
-  { href: '/panduan/', label: 'Panduan', id: 'panduan' },
-  ...(FITUR.lapor ? [{ href: '/lapor/', label: 'Lapor', id: 'lapor' }] : []),
+  { href: '/', label: TEKS.umum.menuPeta, id: 'peta' },
+  { href: '/panduan/', label: TEKS.umum.menuPanduan, id: 'panduan' },
+  ...(FITUR.lapor ? [{ href: '/lapor/', label: TEKS.umum.menuLapor, id: 'lapor' }] : []),
 ];
 ---
 <!doctype html>
@@ -31,7 +32,7 @@ const nav = [
       <div class="wrap">
         <a class="merek" href="/">
           <span class="merek-tanda" aria-hidden="true"></span>
-          <span><b>{SITE.nama}</b><span>oleh {SITE.oleh}</span></span>
+          <span><b>{SITE.nama}</b><span>{isi(TEKS.umum.oleh, { komunitas: SITE.oleh })}</span></span>
         </a>
         <nav class="nav" aria-label="Utama">
           {nav.map((n) => (
@@ -45,8 +46,8 @@ const nav = [
     </main>
     <footer class="kaki">
       <div class="wrap">
-        <p>Rute di sini ramah pesepeda, bukan berarti bebas risiko. Jalan dipakai bersama, jadi tetap waspada.</p>
-        <p>Data checkpoint dikelola komunitas {SITE.oleh}. Peta dasar © OpenStreetMap contributors.</p>
+        <p>{TEKS.umum.kakiRamah}</p>
+        <p>{isi(TEKS.umum.kakiData, { komunitas: SITE.oleh })}</p>
       </div>
     </footer>
   </body>

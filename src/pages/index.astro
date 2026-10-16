@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import skematik from '../assets/peta-skematik.svg?raw';
 import { loadData, jalurSlug } from '../lib/data';
 import { opsiJalur } from '../lib/opsi';
+import { TEKS, isi } from '../teks';
 
 const { checkpoints, jalur } = await loadData();
 const daftar = jalur.map((j) => ({
@@ -12,25 +13,25 @@ const daftar = jalur.map((j) => ({
 ---
 <Base halaman="peta">
   <div class="prosa">
-    <h1>Rute ramah sepeda di Jabodetabek</h1>
-    <p class="redup">Pilih jalur untuk melihat rute, tempat singgah, dan stasiun yang bisa dinaiki bersama sepeda. File GPX tersedia di setiap jalur.</p>
+    <h1>{TEKS.beranda.judul}</h1>
+    <p class="redup">{TEKS.beranda.pengantar}</p>
   </div>
 
   <div class="skematik" set:html={skematik} />
 
-  <h2>Jalur</h2>
+  <h2>{TEKS.beranda.judulDaftar}</h2>
   <ul class="daftar-jalur">
     {daftar.map((j) => (
       <li>
         <a href={`/jalur/${jalurSlug(j.id)}/`}>
           <span class="warna" style={`background:${j.warna}`}></span>
           <span>
-            <b>{j.nama}</b> {j.status === 'Draft' && <span class="chip draft">Draft</span>}
+            <b>{j.nama}</b> {j.status === 'Draft' && <span class="chip draft">{TEKS.jalur.labelDraft}</span>}
             <span class="rute" style="display:block">{j.dari} – {j.ke}</span>
           </span>
           <span class="angka">
             {j.opsi[0] ? `${j.opsi[0].jarakGowesKm.toLocaleString('id-ID')} km` : '—'}
-            <span class="redup kecil" style="display:block;font-weight:400">{j.opsi.length} pilihan perjalanan</span>
+            <span class="redup kecil" style="display:block;font-weight:400">{isi(TEKS.beranda.jumlahPilihan, { n: j.opsi.length })}</span>
           </span>
         </a>
       </li>

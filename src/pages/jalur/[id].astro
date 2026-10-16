@@ -4,6 +4,8 @@ import Peta from '../../components/Peta.astro';
 import { loadData, jalurSlug, cpSlug } from '../../lib/data';
 import { opsiJalur, type Opsi, type Ruas } from '../../lib/opsi';
 import { titikCabang } from '../../lib/urutan';
+import { TEKS, isi } from '../../teks';
+const T = TEKS.jalur;
 
 export async function getStaticPaths() {
   const { jalur } = await loadData();
@@ -36,16 +38,16 @@ function susunLin(o: Opsi): Titik[] {
   };
   o.ruas.forEach((r: Ruas) => {
     if (r.jenis === 'gowes') {
-      tambah({ nama: r.dari, meta: [`Gowes ${fmtKm(r.jarakKm)} sampai ${r.ke}`], seg: 'gowes' });
+      tambah({ nama: r.dari, meta: [isi(T.alurGowes, { km: fmtKm(r.jarakKm), ke: r.ke })], seg: 'gowes' });
       tambah({ nama: r.ke, meta: [], seg: null });
     } else {
       const s = r.stasiun;
       const lewat = s.length - 2;
       const keluarLain = s.slice(1, -1).filter((x) => x.nonLipat).map((x) => x.nama.replace(/^Stasiun (MRT )?/, ''));
       tambah({ nama: s[0].nama, url: s[0].cpId ? `/cp/${cpSlug(s[0].cpId)}/` : undefined, transit: true,
-        meta: [`Naik ${r.moda}${lewat > 0 ? `, melewati ${lewat} stasiun` : ''}`, ...(keluarLain.length ? [`Bisa juga turun di ${keluarLain.join(', ')}`] : [])], seg: 'kereta' });
+        meta: [lewat > 0 ? isi(T.alurNaikLewat, { moda: r.moda, n: lewat }) : isi(T.alurNaik, { moda: r.moda }), ...(keluarLain.length ? [isi(T.alurBisaTurun, { stasiun: keluarLain.join(', ') })] : [])], seg: 'kereta' });
       const z = s[s.length - 1];
-      tambah({ nama: z.nama, url: z.cpId ? `/cp/${cpSlug(z.cpId)}/` : undefined, transit: true, meta: ['Turun di sini'], seg: null });
+      tambah({ nama: z.nama, url: z.cpId ? `/cp/${cpSlug(z.cpId)}/` : undefined, transit: true, meta: [T.alurTurun], seg: null });
     }
   });
   if (out.length) { out[0].ujung = true; out[out.length - 1].ujung = true; }
@@ -95,13 +97,13 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
     <span class="warna" style={`background:${j.warna}`}></span>
     <div>
       <h1>{j.nama}</h1>
-      <p class="redup" style="margin:0">{j.dari} – {j.ke} {adaDraft && <span class="chip draft">Draft</span>}</p>
+      <p class="redup" style="margin:0">{j.dari} – {j.ke} {adaDraft && <span class="chip draft">{T.labelDraft}</span>}</p>
     </div>
   </div>
 
   {adaDraft && (
     <div class="peringatan">
-      <p><b>Rute ini masih draft.</b> Garisnya dibuat otomatis dari data peta dan belum digowes untuk verifikasi. Pakai sebagai gambaran dulu, bukan panduan navigasi.</p>
+      <p><b>{T.draftJudul}</b> {T.draftIsi}</p>
     </div>
   )}
 
@@ -119,23 +121,23 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
     <section class="panel-opsi" role={opsi.length > 1 ? 'tabpanel' : undefined} id={`panel-${o.id}`} aria-labelledby={opsi.length > 1 ? `tab-${o.id}` : undefined} hidden={i !== 0}>
       <p class="prosa">{o.ringkas}</p>
       <dl class="statistik">
-        <div><dt>Jarak gowes{o.draft ? ' (perkiraan)' : ''}</dt><dd>{fmtKm(o.jarakGowesKm)}</dd></div>
-        <div><dt>Total tanjakan</dt><dd>{o.tanjakanM != null ? `${o.tanjakanM} m` : '—'}</dd></div>
-        <div><dt>Sepeda</dt><dd style="font-size:1rem;padding-top:6px">{o.sepeda}</dd></div>
-        <div><dt>Tempat singgah</dt><dd>{singgah.length}</dd></div>
+        <div><dt>{o.draft ? T.statJarakDraft : T.statJarak}</dt><dd>{fmtKm(o.jarakGowesKm)}</dd></div>
+        <div><dt>{T.statTanjakan}</dt><dd>{o.tanjakanM != null ? `${o.tanjakanM} m` : '—'}</dd></div>
+        <div><dt>{T.statSepeda}</dt><dd style="font-size:1rem;padding-top:6px">{o.sepeda}</dd></div>
+        <div><dt>{T.statMampir}</dt><dd>{singgah.length}</dd></div>
       </dl>
       <p style="display:flex;gap:10px;flex-wrap:wrap">
         {o.ruas.filter((r) => r.jenis === 'gowes').map((r) => (
           <a class="tombol" href={`/gpx/${r.gpx}`} download={r.gpx}>
-            Unduh GPX{o.ruas.filter((x) => x.jenis === 'gowes').length > 1 || o.ruas.length > 1 ? `: ${r.dari} – ${r.ke}` : ''}
+            {o.ruas.length > 1 ? isi(T.tombolGpxRuas, { dari: r.dari, ke: r.ke }) : T.tombolGpx}
           </a>
         ))}
-        {o.ruas.some((r) => r.jenis === 'kereta') && <a class="tombol garis" href="/panduan/#transum">Aturan bawa sepeda di transum</a>}
+        {o.ruas.some((r) => r.jenis === 'kereta') && <a class="tombol garis" href="/panduan/#transum">{T.tombolTransum}</a>}
       </p>
 
       <div class="tata-jalur" style={`--warna-lin:${j.warna}`}>
         <div>
-          <h2>Urutan perjalanan</h2>
+          <h2>{T.judulAlur}</h2>
           <ol class="lin">
             {lin.map((t) => (
               <li class:list={[{ ujung: t.ujung }, t.seg ? `seg-${t.seg}` : 'seg-akhir']}>
@@ -149,26 +151,26 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
             <p class="kecil redup">{(r as any).catatan}</p>
           ))}
 
-          <h2 style="margin-top:28px">Singgah di sekitar rute</h2>
+          <h2 style="margin-top:28px">{T.judulMampir}</h2>
           {singgah.length === 0
-            ? <p class="redup kecil">Belum ada tempat singgah yang tercatat di dekat ruas gowes opsi ini.</p>
+            ? <p class="redup kecil">{T.mampirKosong}</p>
             : (
               <ul class="singgah">
                 {singgah.map((s) => (
                   <li>
                     <a href={`/cp/${cpSlug(s.c.id)}/`}>{s.c.nama}</a>
-                    <span class="meta">{s.c.kategori}{s.c.kategoriLain ? ` · ${s.c.kategoriLain}` : ''} · {fmtJarak(s.jarakKm * 1000)} dari rute</span>
+                    <span class="meta">{s.c.kategori}{s.c.kategoriLain ? ` · ${s.c.kategoriLain}` : ''} · {isi(T.mampirJarak, { jarak: fmtJarak(s.jarakKm * 1000) })}</span>
                     {s.c.jamBuka && <span class="meta">{s.c.jamBuka}</span>}
-                    <a class="kecil" href={arahkan(s.titik, s.c.lat, s.c.lon)} target="_blank" rel="noopener">Arahkan dari rute</a>
+                    <a class="kecil" href={arahkan(s.titik, s.c.lat, s.c.lon)} target="_blank" rel="noopener">{T.mampirArahkan}</a>
                   </li>
                 ))}
               </ul>
             )}
-          <p class="kecil redup">Tempat singgah bukan bagian dari rute. Ikuti rute utama, lalu belok ke tempat tujuan dari titik cabang terdekat.</p>
+          <p class="kecil redup">{T.mampirCatatan}</p>
         </div>
 
         <div class="peta-wrap">
-          <Peta label={`Peta ${j.nama}, ${o.nama}`} garis={peta.garis} titik={peta.titik} />
+          <Peta label={`Peta ${j.nama}, ${o.nama}`} garis={peta.garis} titik={peta.titik} teks={{ dariRute: T.mampirJarak, arahkan: T.mampirArahkan }} />
         </div>
       </div>
     </section>

@@ -5,10 +5,10 @@
 interface Cabang { titik: [number, number]; jarakM: number; arahkan: string }
 interface Titik { nama: string; kategori: string; lat: number; lon: number; url?: string; jenis?: 'utama' | 'singgah'; cabang?: Cabang }
 interface Garis { coords: [number, number][]; warna: string; putus?: boolean }
-interface Props { garis?: Garis[]; titik: Titik[]; kecil?: boolean; label: string }
-const { garis = [], titik, kecil = false, label } = Astro.props;
+interface Props { garis?: Garis[]; titik: Titik[]; kecil?: boolean; label: string; teks?: { dariRute: string; arahkan: string } }
+const { garis = [], titik, kecil = false, label, teks = { dariRute: '{jarak} dari rute', arahkan: 'Lihat jalan ke sini' } } = Astro.props;
 import { MAP_STYLE } from '../config';
-const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
+const data = JSON.stringify({ garis, titik, style: MAP_STYLE, teks });
 ---
 <div class:list={['peta', { kecil }]} data-peta={data} role="region" aria-label={label}></div>
 
@@ -20,7 +20,7 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
   const fmtJarak = (m: number) => (m < 1000 ? `± ${Math.round(m / 50) * 50} m` : `± ${(m / 1000).toFixed(1).replace('.', ',')} km`);
 
   function buatPeta(el: HTMLElement) {
-    const { garis, titik, style } = JSON.parse(el.dataset.peta!);
+    const { garis, titik, style, teks } = JSON.parse(el.dataset.peta!);
     const semua: [number, number][] = [
       ...garis.flatMap((g: any) => g.coords),
       ...titik.map((t: any) => [t.lon, t.lat]),
@@ -85,8 +85,8 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE });
       let html = t.url ? `<a href="${esc(t.url)}">${esc(t.nama)}</a>` : `<b>${esc(t.nama)}</b>`;
       html += `<br><span>${esc(t.kategori)}</span>`;
       if (t.cabang) {
-        html += `<br><span>${fmtJarak(t.cabang.jarakM)} dari rute</span>`;
-        html += `<br><a href="${esc(t.cabang.arahkan)}" target="_blank" rel="noopener">Arahkan dari rute</a>`;
+        html += `<br><span>${esc(teks.dariRute.replace('{jarak}', fmtJarak(t.cabang.jarakM)))}</span>`;
+        html += `<br><a href="${esc(t.cabang.arahkan)}" target="_blank" rel="noopener">${esc(teks.arahkan)}</a>`;
       }
       const popup = new maplibregl.Popup({ offset: 12, closeButton: false }).setHTML(html);
       new maplibregl.Marker({ element: dot }).setLngLat([t.lon, t.lat]).setPopup(popup).addTo(map);

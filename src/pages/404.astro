@@ -1,10 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
+import { TEKS } from '../teks';
+const T = TEKS.halamanTidakAda;
 ---
-<Base judul="Halaman tidak ditemukan">
+<Base judul={T.judul}>
   <div class="prosa">
-    <h1>Halaman tidak ditemukan</h1>
-    <p>Alamat ini tidak ada atau sudah dipindahkan. Kalau kamu memindai QR di lokasi, kemungkinan checkpoint tersebut sedang diperbarui.</p>
-    <p><a class="tombol" href="/">Kembali ke peta</a></p>
+    <h1>{T.judul}</h1>
+    <p>{T.isi}</p>
+    <p><a class="tombol" href="/">{T.tombol}</a></p>
   </div>
 </Base>

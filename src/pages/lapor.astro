@@ -1,13 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
 import { LAPOR_FORM_URL, SITE } from '../config';
+import { TEKS, isi } from '../teks';
+const T = TEKS.lapor;
 ---
-<Base judul="Lapor" halaman="lapor">
+<Base judul={TEKS.umum.menuLapor} halaman="lapor">
   <div class="prosa">
-    <h1>Lapor perubahan di jalan</h1>
-    <p>Bantu jaga data tetap akurat. Laporkan jalan rusak, ruas yang sering banjir, tempat yang sudah tutup, atau usulan checkpoint baru. Setiap laporan dicek dulu oleh tim {SITE.oleh} sebelum masuk ke peta.</p>
+    <h1>{T.judul}</h1>
+    <p>{isi(T.pengantar, { komunitas: SITE.oleh })}</p>
     {LAPOR_FORM_URL
-      ? <p><a class="tombol" href={LAPOR_FORM_URL} target="_blank" rel="noopener">Buka formulir laporan</a></p>
-      : <p class="peringatan">Formulir laporan sedang disiapkan. Sementara ini, sampaikan laporan langsung ke pengurus {SITE.oleh}.</p>}
+      ? <p><a class="tombol" href={LAPOR_FORM_URL} target="_blank" rel="noopener">{T.tombol}</a></p>
+      : <p class="peringatan">{isi(T.belumSiap, { komunitas: SITE.oleh })}</p>}
   </div>
 </Base>

@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import Peta from '../../components/Peta.astro';
 import { loadData, cpSlug, jalurSlug } from '../../lib/data';
 import { FITUR } from '../../config';
+import { TEKS, isi } from '../../teks';
+const T = TEKS.checkpoint;
 
 // URL checkpoint (/cp/tgs-07/) dicetak di QR. Jangan mengubah pola ini.
 export async function getStaticPaths() {
@@ -15,7 +17,7 @@ const { checkpoints, jalur } = await loadData();
 const c = checkpoints.find((x) => x.id === cpId)!;
 const j = jalur.find((x) => x.id === c.jalur);
 const terverifikasi = c.status === 'Terverifikasi';
-const isi = (v: string) => (v && v !== 'Belum dicek' ? v : null);
+const ada = (v: string) => (v && v !== 'Belum dicek' ? v : null);
 ---
 <Base judul={c.nama} deskripsi={`${c.nama}, checkpoint ${j?.nama ?? ''}. ${c.kategori}, ${c.wilayah}.`}>
   <p class="redup kecil" style="margin-bottom:6px">
@@ -26,27 +28,27 @@ const isi = (v: string) => (v && v !== 'Belum dicek' ? v : null);
     <span class="chip">{c.kategori}</span>
     {c.kategoriLain && <span class="chip">{c.kategoriLain}</span>}
     {terverifikasi
-      ? <span class="chip">Terverifikasi</span>
+      ? <span class="chip">{T.terverifikasi}</span>
       : c.status === 'Perlu dicek ulang'
-        ? <span class="chip waspada">Perlu dicek ulang</span>
-        : <span class="chip draft">Belum diverifikasi</span>}
+        ? <span class="chip waspada">{T.perluCekUlang}</span>
+        : <span class="chip draft">{T.belumVerifikasi}</span>}
   </p>
 
   <div class="tata-cp">
     <div>
       <dl class="rincian">
-        <dt>Wilayah</dt><dd>{c.wilayah}</dd>
-        <dt>Alamat</dt><dd>{c.alamat}</dd>
-        {c.jamBuka && <><dt>Jam buka</dt><dd>{c.jamBuka}</dd></>}
-        <dt>Parkir sepeda</dt><dd>{isi(c.parkirSepeda) ?? <span class="redup">Belum dicek</span>}</dd>
-        {c.kategori === 'Transit' && <><dt>Sepeda non-lipat</dt><dd>{c.sepedaNonLipat === 'Ya' ? 'Boleh dibawa' : c.sepedaNonLipat || 'Belum dicek'}</dd></>}
-        {terverifikasi && c.diverifikasiTanggal && <><dt>Diverifikasi</dt><dd>{c.diverifikasiTanggal}{c.diverifikasiOleh ? ` oleh ${c.diverifikasiOleh}` : ''}</dd></>}
+        <dt>{T.wilayah}</dt><dd>{c.wilayah}</dd>
+        <dt>{T.alamat}</dt><dd>{c.alamat}</dd>
+        {c.jamBuka && <><dt>{T.jamBuka}</dt><dd>{c.jamBuka}</dd></>}
+        <dt>{T.parkirSepeda}</dt><dd>{ada(c.parkirSepeda) ?? <span class="redup">{T.belumDicek}</span>}</dd>
+        {c.kategori === 'Transit' && <><dt>{T.sepedaNonLipat}</dt><dd>{c.sepedaNonLipat === 'Ya' ? T.bolehDibawa : c.sepedaNonLipat || T.belumDicek}</dd></>}
+        {terverifikasi && c.diverifikasiTanggal && <><dt>{T.diverifikasi}</dt><dd>{c.diverifikasiTanggal}{c.diverifikasiOleh ? ` oleh ${c.diverifikasiOleh}` : ''}</dd></>}
       </dl>
       {c.catatan && <p class="prosa">{c.catatan}</p>}
-      {!terverifikasi && <p class="redup kecil prosa">Data titik ini belum dicek langsung di lapangan. Jam buka dan fasilitas bisa berbeda.</p>}
+      {!terverifikasi && <p class="redup kecil prosa">{T.catatanBelumVerifikasi}</p>}
       <p style="display:flex;gap:10px;flex-wrap:wrap">
-        {c.mapsUrl && <a class="tombol" href={c.mapsUrl} target="_blank" rel="noopener">Buka di Google Maps</a>}
-        {j && <a class="tombol garis" href={`/jalur/${jalurSlug(j.id)}/`}>Lihat {j.nama}</a>}
+        {c.mapsUrl && <a class="tombol" href={c.mapsUrl} target="_blank" rel="noopener">{T.tombolMaps}</a>}
+        {j && <a class="tombol garis" href={`/jalur/${jalurSlug(j.id)}/`}>{isi(T.tombolJalur, { jalur: j.nama })}</a>}
       </p>
     </div>
     <div>
@@ -54,7 +56,7 @@ const isi = (v: string) => (v && v !== 'Belum dicek' ? v : null);
       {FITUR.qr && (
         <div style="margin-top:20px">
           <div class="qr"><img src={`/qr/${cpSlug(c.id)}.svg`} alt={`QR menuju halaman ${c.nama}`} width="180" height="180" /></div>
-          <p class="kecil redup" style="margin-top:8px"><a href={`/qr/${cpSlug(c.id)}.svg`} download={`qr-${cpSlug(c.id)}.svg`}>Unduh QR</a> untuk dicetak di lokasi.</p>
+          <p class="kecil redup" style="margin-top:8px"><a href={`/qr/${cpSlug(c.id)}.svg`} download={`qr-${cpSlug(c.id)}.svg`}>{T.unduhQr}</a> {T.unduhQrKeterangan}</p>
         </div>
       )}
     </div>

@@ -19,8 +19,17 @@ Kata yang dipakai adalah **ramah**, bukan aman. Jalan dipakai bersama, jadi pese
 | Garis rute | Ganti file di `public/gpx/` | Tidak, cukup unggah file |
 | Pilihan perjalanan (gowes penuh, gowes + MRT, KRL + gowes) | `data/opsi.json` | Sedikit |
 | Peta skematik beranda | Ganti file `src/assets/peta-skematik.svg` | Tidak |
+| Semua teks dan kata di tampilan web | `src/teks.ts` | Tidak, cukup ganti kata di antara tanda kutip |
 | Warna dan huruf web | `src/styles/global.css`, bagian paling atas | Sedikit |
 | Nyala/mati fitur | `src/config.ts`, bagian `FITUR` | Sedikit |
+
+### Mengubah kata-kata di web
+
+Semua teks tampilan (judul, tombol, label, keterangan) dikumpulkan di `src/teks.ts`. Cara mengubahnya langsung dari GitHub:
+
+1. Buka file `src/teks.ts` di GitHub, klik ikon pensil (Edit).
+2. Ganti kata di antara tanda kutip `'...'`. Bagian `{seperti_ini}` jangan dihapus, karena akan diganti angka atau nama secara otomatis.
+3. Klik **Commit changes**. Cloudflare membangun ulang web dalam beberapa menit.
 
 ### Google Sheet
 
@@ -34,7 +43,7 @@ ID seperti `TGS-07` menjadi alamat halaman `/cp/tgs-07/` dan dicetak di QR. **Ja
 
 ### Pilihan perjalanan dan file GPX
 
-Setiap jalur punya satu atau lebih pilihan perjalanan di `data/opsi.json`. Satu pilihan terdiri dari ruas **gowes** (menunjuk file GPX) dan ruas **kereta** (daftar stasiun). Kafe dan bengkel bukan bagian dari rute: web otomatis menampilkannya sebagai tempat singgah kalau letaknya dalam 2 km dari ruas gowes, lengkap dengan titik cabang dan tombol "Arahkan dari rute".
+Setiap jalur punya satu atau lebih pilihan perjalanan di `data/opsi.json`. Satu pilihan terdiri dari ruas **gowes** (menunjuk file GPX) dan ruas **kereta** (daftar stasiun). Kafe dan bengkel bukan bagian dari rute: web otomatis menampilkannya sebagai tempat mampir kalau letaknya dalam 2 km dari ruas gowes, lengkap dengan garis cabang dari rute dan tombol menuju Google Maps.
 
 File GPX yang dipakai Jalur Tangsel:
 

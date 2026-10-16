@@ -1,24 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
+import { TEKS } from '../teks';
+const T = TEKS.panduan;
 ---
-<Base judul="Panduan" halaman="panduan">
+<Base judul={T.judul} halaman="panduan">
   <div class="prosa">
-    <h1>Panduan</h1>
-    <p>Semua rute di web ini <b>ramah pesepeda</b>, bukan dijamin aman. Jalan dipakai bersama pejalan kaki, motor, mobil, dan angkutan umum, jadi tetap berhati-hati di setiap ruas.</p>
+    <h1>{T.judul}</h1>
+    <p>{T.pembuka}</p>
 
-    <h2 id="level">Level keramahan</h2>
-    <p>Setiap ruas rute diberi salah satu dari tiga level berikut setelah digowes dan diverifikasi.</p>
+    <h2 id="level">{T.judulLevel}</h2>
+    <p>{T.pengantarLevel}</p>
     <div class="level" style="margin-bottom:32px">
-      <div><i style="background:var(--teal)"></i><span><b>Ramah pemula.</b> Jalur sepeda terproteksi atau jalan lingkungan yang sepi.</span></div>
-      <div><i style="background:var(--mustard)"></i><span><b>Perlu pengalaman.</b> Bercampur dengan lalu lintas, tapi masih wajar dilalui.</span></div>
-      <div><i style="background:var(--rose)"></i><span><b>Waspada.</b> Ruas yang terpaksa dilewati karena belum ada alternatif. Kurangi kecepatan dan perhatikan sekitar.</span></div>
+      <div><i style="background:var(--teal)"></i><span><b>{T.level1Nama}</b> {T.level1Isi}</span></div>
+      <div><i style="background:var(--mustard)"></i><span><b>{T.level2Nama}</b> {T.level2Isi}</span></div>
+      <div><i style="background:var(--rose)"></i><span><b>{T.level3Nama}</b> {T.level3Isi}</span></div>
     </div>
 
-    <h2 id="transum">Membawa sepeda di transportasi umum</h2>
+    <h2 id="transum">{T.judulTransum}</h2>
   </div>
   <div class="tabel-wrap">
     <table>
-      <thead><tr><th>Moda</th><th>Sepeda lipat</th><th>Sepeda non-lipat</th></tr></thead>
+      <thead><tr><th>{T.kolomModa}</th><th>{T.kolomLipat}</th><th>{T.kolomNonLipat}</th></tr></thead>
       <tbody>
         <tr><td><b>MRT Jakarta</b></td><td>Boleh</td><td>Hanya lewat 4 stasiun: Lebak Bulus, Blok M, Istora, dan Bundaran HI</td></tr>
         <tr><td><b>LRT Jabodebek</b></td><td>Boleh</td><td>Boleh di semua stasiun</td></tr>
@@ -28,9 +30,9 @@ import Base from '../layouts/Base.astro';
     </table>
   </div>
   <div class="prosa">
-    <p class="redup kecil">Ketentuan jam, gerbong, dan cara masuk stasiun bisa berubah. Cek pengumuman resmi operator sebelum berangkat.</p>
+    <p class="redup kecil">{T.catatanTransum}</p>
 
-    <h2 id="persiapan">Persiapan dan etika bersepeda</h2>
-    <p class="redup">Bagian ini sedang disusun bersama program PAGI dan akan segera ditambahkan.</p>
+    <h2 id="persiapan">{T.judulPersiapan}</h2>
+    <p class="redup">{T.isiPersiapan}</p>
   </div>
 </Base>

@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "sync-data": "node scripts/sync-data.mjs",
-    "buat-cabang": "node scripts/buat-cabang.mjs"
+    "buat-cabang": "node scripts/buat-cabang.mjs",
+    "olah-survei": "node scripts/olah-survei.mjs"
   },
   "dependencies": {
     "astro": "5.18.2",

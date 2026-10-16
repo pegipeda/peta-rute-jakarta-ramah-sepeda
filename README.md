@@ -61,6 +61,14 @@ Jarak dan total tanjakan dihitung otomatis dari GPX. Semua file sekarang masih *
 
 `src/assets/peta-skematik.svg` adalah versi sementara. Ganti dengan ekspor SVG dari Figma. Satu aturan: setiap garis jalur dibungkus grup dengan `id="jalur-KODE"` (contoh `id="jalur-TGS"`). Web otomatis menjadikan grup itu bisa diklik menuju halaman jalurnya.
 
+## Survei rute
+
+1. Surveyor merekam rute dengan Strava, Komoot, atau Garmin, lalu mengunggah file GPX ke folder Google Drive **Survey Rute** milik akun PegiPeda. Nama file bebas.
+2. Admin membuka Claude dengan repo ini dan cukup bilang **"rapikan"**. Catatan surveyor boleh ditempel apa adanya, misalnya "Comum ada parkir sepeda, LooPs udah pindah".
+3. Claude mencocokkan rekaman ke jalur, memotong awal dan akhir rekaman supaya lokasi rumah surveyor tidak ikut terbit, memperbarui web, lalu melapor apa saja yang berubah.
+
+Prosedur lengkapnya untuk Claude ada di `CLAUDE.md`.
+
 ## QR dan domain
 
 QR dibuat dari alamat web yang diatur lewat environment variable `SITE_URL` (lihat `astro.config.mjs`). **Pastikan domain final sudah benar sebelum QR dicetak.** Kalau domain berganti setelah QR tertempel, semua QR di lapangan ikut mati.

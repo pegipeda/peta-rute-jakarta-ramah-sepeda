@@ -17,7 +17,7 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE, teks });
   import 'maplibre-gl/dist/maplibre-gl.css';
 
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-  const fmtJarak = (m: number) => (m < 1000 ? `± ${Math.round(m / 50) * 50} m` : `± ${(m / 1000).toFixed(1).replace('.', ',')} km`);
+  const fmtJarak = (m: number) => { const r = Math.round(m / 50) * 50; return r < 1000 ? `± ${r} m` : `± ${(m / 1000).toFixed(1).replace('.', ',').replace(',0', '')} km`; };
 
   function buatPeta(el: HTMLElement) {
     const { garis, titik, style, teks } = JSON.parse(el.dataset.peta!);
@@ -78,9 +78,9 @@ const data = JSON.stringify({ garis, titik, style: MAP_STYLE, teks });
       Object.assign(dot.style, {
         width: utama ? '18px' : '13px', height: utama ? '18px' : '13px', padding: '0', cursor: 'pointer',
         borderRadius: transit ? '4px' : '50%',
-        background: utama ? '#ffffff' : '#1F5C63',
+        background: utama ? '#ffffff' : (/Bengkel/.test(t.kategori) ? '#D9A21B' : '#1F5C63'),
         border: utama ? '4px solid #16201f' : '3px solid #ffffff',
-        boxShadow: utama ? '0 0 0 2px #ffffff' : '0 0 0 1px #1F5C63',
+        boxShadow: utama ? '0 0 0 2px #ffffff' : `0 0 0 1px ${/Bengkel/.test(t.kategori) ? '#a77a0c' : '#1F5C63'}`,
       });
       let html = t.url ? `<a href="${esc(t.url)}">${esc(t.nama)}</a>` : `<b>${esc(t.nama)}</b>`;
       html += `<br><span>${esc(t.kategori)}</span>`;

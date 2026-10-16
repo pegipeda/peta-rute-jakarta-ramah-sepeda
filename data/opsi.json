@@ -96,11 +96,7 @@
           "moda": "KRL lin Rangkasbitung",
           "catatan": "Sepeda harus dalam keadaan terlipat selama di kereta dan stasiun.",
           "stasiun": [
-            {
-              "nama": "Stasiun Rawa Buntu",
-              "lat": -6.3147,
-              "lon": 106.6769
-            },
+            "TGS-10",
             {
               "nama": "Sudimara",
               "lat": -6.2972,
@@ -121,11 +117,7 @@
               "lat": -6.2075,
               "lon": 106.7975
             },
-            {
-              "nama": "Stasiun Tanah Abang",
-              "lat": -6.1857,
-              "lon": 106.8109
-            }
+            "TGS-11"
           ]
         },
         {

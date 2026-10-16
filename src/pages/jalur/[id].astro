@@ -26,7 +26,7 @@ const BATAS_SINGGAH_KM = 2;
 const kandidatSinggah = checkpoints.filter((c) => c.kategori !== 'Transit');
 
 const fmtKm = (km: number) => `${km.toLocaleString('id-ID', { maximumFractionDigits: 1 })} km`;
-const fmtJarak = (m: number) => (m < 1000 ? `± ${Math.round(m / 50) * 50} m` : `± ${(m / 1000).toLocaleString('id-ID', { maximumFractionDigits: 1 })} km`);
+const fmtJarak = (m: number) => { const r = Math.round(m / 50) * 50; return r < 1000 ? `± ${r} m` : `± ${(m / 1000).toLocaleString('id-ID', { maximumFractionDigits: 1 })} km`; };
 const arahkan = (dari: [number, number], lat: number, lon: number) =>
   `https://www.google.com/maps/dir/?api=1&origin=${dari[1]},${dari[0]}&destination=${lat},${lon}&travelmode=bicycling`;
 
@@ -167,8 +167,14 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
           {singgah.length === 0
             ? <p class="redup kecil">{T.mampirKosong}</p>
             : (
+              [
+                { judul: T.grupBengkel, isi: singgah.filter((s) => s.c.kategori === 'Bengkel' || s.c.kategoriLain === 'Bengkel') },
+                { judul: T.grupLain, isi: singgah.filter((s) => !(s.c.kategori === 'Bengkel' || s.c.kategoriLain === 'Bengkel')) },
+              ].filter((g) => g.isi.length).map((g) => (
+              <>
+              <h3 class="grup-mampir">{g.judul}</h3>
               <ul class="singgah">
-                {singgah.map((s) => (
+                {g.isi.map((s) => (
                   <li>
                     <a href={`/cp/${cpSlug(s.c.id)}/`}>{s.c.nama}</a>
                     <span class="meta">{s.c.kategori}{s.c.kategoriLain ? ` · ${s.c.kategoriLain}` : ''} · {isi(T.mampirJarak, { jarak: fmtJarak(s.jarakKm * 1000) })}</span>
@@ -177,6 +183,8 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
                   </li>
                 ))}
               </ul>
+              </>
+              ))
             )}
           <p class="kecil redup">{T.mampirCatatan}</p>
         </div>

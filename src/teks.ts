@@ -42,6 +42,8 @@ export const TEKS = {
     alurBisaTurun: 'Bisa juga turun di {stasiun}',
     alurTurun: 'Turun di sini',
     judulMampir: 'Mampir duls',
+    grupBengkel: 'Bengkel & toko sepeda',
+    grupLain: 'Ngopi & rehat',
     mampirKosong: 'Belum ada tempat mampir yang tercatat di dekat rute ini.',
     mampirJarak: '{jarak} dari rute',
     mampirArahkan: 'Lihat jalan ke sini',

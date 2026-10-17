@@ -169,10 +169,10 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
             : (
               [
                 { judul: T.grupBengkel, isi: singgah.filter((s) => s.c.kategori === 'Bengkel' || s.c.kategoriLain === 'Bengkel') },
-                { judul: T.grupLain, isi: singgah.filter((s) => !(s.c.kategori === 'Bengkel' || s.c.kategoriLain === 'Bengkel')) },
+                { judul: T.grupLain, isi: singgah.filter((s) => s.c.kategori !== 'Bengkel' || (s.c.kategoriLain && s.c.kategoriLain !== 'Bengkel')) },
               ].filter((g) => g.isi.length).map((g) => (
-              <>
-              <h3 class="grup-mampir">{g.judul}</h3>
+              <details class="grup-mampir">
+              <summary><span>{g.judul}</span><span class="jumlah">{g.isi.length}</span></summary>
               <ul class="singgah">
                 {g.isi.map((s) => (
                   <li>
@@ -183,7 +183,7 @@ const adaDraft = opsi.some((o) => o.draft) || j.status === 'Draft';
                   </li>
                 ))}
               </ul>
-              </>
+              </details>
               ))
             )}
           <p class="kecil redup">{T.mampirCatatan}</p>

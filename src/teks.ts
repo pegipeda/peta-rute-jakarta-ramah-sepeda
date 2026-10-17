@@ -10,7 +10,7 @@ export const TEKS = {
   umum: {
     menuPeta: 'Peta',
     menuPanduan: 'Panduan',
-    menuLapor: 'Lapor',
+    menuSaranRute: 'Saran rute',
     kakiRamah: 'Rute di sini ramah pesepeda, bukan berarti bebas risiko. Jalan dipakai bersama, jadi tetap waspada.',
     kakiData: 'Data checkpoint dikelola komunitas {komunitas}. Peta dasar © OpenStreetMap contributors.',
     oleh: 'oleh {komunitas}',
@@ -89,11 +89,18 @@ export const TEKS = {
     isiPersiapan: 'Bagian ini sedang disusun bersama program PAGI dan akan segera ditambahkan.',
   },
 
-  lapor: {
-    judul: 'Lapor perubahan di jalan',
-    pengantar: 'Bantu jaga data tetap akurat. Laporkan jalan rusak, ruas yang sering banjir, tempat yang sudah tutup, atau usulan checkpoint baru. Setiap laporan dicek dulu oleh tim {komunitas} sebelum masuk ke peta.',
-    tombol: 'Buka formulir laporan',
-    belumSiap: 'Formulir laporan sedang disiapkan. Sementara ini, sampaikan laporan langsung ke pengurus {komunitas}.',
+  saranRute: {
+    judul: 'Punya rute favorit?',
+    pengantar: 'Kalau kamu sering gowes di rute yang menurutmu ramah sepeda, bagikan ke kami. Rute yang masuk akan dikurasi bareng tim {komunitas}, digowes ulang kalau perlu, lalu ditambahkan ke peta.',
+    judulIsi: 'Yang perlu kamu siapkan',
+    isi: [
+      'Rute dari mana ke mana, misalnya "Stasiun Bekasi sampai Kota Tua".',
+      'File GPX rekaman gowesmu, bisa diunduh dari Strava, Komoot, Garmin, atau aplikasi sejenis.',
+      'Cerita singkat kenapa rute ini enak dilewati (boleh dikosongkan).',
+    ],
+    catatanPrivasi: 'Bagian awal dan akhir rekaman akan kami potong sebelum terbit, supaya lokasi rumahmu tidak ikut tampil.',
+    tombol: 'Kirim saran rute',
+    belumSiap: 'Formulir saran rute sedang disiapkan. Sementara ini, kirim rute dan file GPX langsung ke pengurus {komunitas}.',
   },
 
   halamanTidakAda: {

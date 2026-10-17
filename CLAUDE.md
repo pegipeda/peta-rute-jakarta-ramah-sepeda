@@ -31,6 +31,8 @@ Kalau admin bilang "rapikan" (boleh diikuti catatan bebas dari surveyor), kerjak
 8. **Catat dan terbitkan**: tambahkan ID file Drive ke `data/survei-log.json` beserta tanggal dan ruasnya, commit dengan pesan berbahasa Indonesia, push ke `main`.
 9. **Lapor ke admin** dalam beberapa kalimat: ruas apa yang diperbarui, apa yang berubah (jarak, simpangan, checkpoint), dan pertanyaan untuk hal yang tidak bisa ditebak. Jangan minta admin mengisi sheet atau mengganti nama file.
 
+10. **Cek saran rute dari relawan.** Relawan di luar PegiPeda mengisi Google Form di halaman Saran rute (link di `SARAN_RUTE_FORM_URL`, `src/config.ts`). Jawabannya masuk ke tab sheet berawalan "Saran" atau "Jawaban Formulir", file GPX-nya ke folder Drive milik formulir. Saran rute **tidak pernah diterbitkan otomatis**: untuk setiap saran baru (catat ID baris atau file di `data/survei-log.json` bagian `saran`), olah GPX-nya dengan `olah-survei.mjs` tanpa `--simpan` untuk melihat jarak dan apakah bersinggungan dengan jalur yang ada, cek sekilas jenis jalannya di OpenStreetMap, lalu laporkan ringkas ke admin (dari mana ke mana, jarak, catatan relawan, kesan awal) dan tanyakan apakah mau dikurasi lebih lanjut. Jangan cantumkan kontak relawan di repo.
+
 Rute yang sudah dari rekaman survei tidak lagi berstatus draft (tanda `DRAFT` hilang dari file GPX). Kalau semua ruas di satu jalur sudah dari survei, ubah Status jalur di tab Jalur menjadi "Terverifikasi".
 
 ## Commit

@@ -63,6 +63,13 @@ Jarak dan total tanjakan dihitung otomatis dari GPX. Semua file sekarang masih *
 
 ## Survei rute
 
+Ada dua pintu masuk rute baru:
+
+- **Folder Drive "Survey Rute"**: untuk surveyor PegiPeda. Rekaman langsung diolah dan terbit saat admin bilang "rapikan".
+- **Halaman Saran rute** di web: untuk relawan di luar PegiPeda, lewat Google Form (isi dari mana ke mana plus file GPX). Saran tidak terbit otomatis; Claude merangkumnya saat "rapikan", lalu dikurasi bareng tim.
+
+Alur surveyor:
+
 1. Surveyor merekam rute dengan Strava, Komoot, atau Garmin, lalu mengunggah file GPX ke folder Google Drive **Survey Rute** milik akun PegiPeda. Nama file bebas.
 2. Admin membuka Claude dengan repo ini dan cukup bilang **"rapikan"**. Catatan surveyor boleh ditempel apa adanya, misalnya "Comum ada parkir sepeda, LooPs udah pindah".
 3. Claude mencocokkan rekaman ke jalur, memotong awal dan akhir rekaman supaya lokasi rumah surveyor tidak ikut terbit, memperbarui web, lalu melapor apa saja yang berubah.
@@ -95,7 +102,7 @@ src/config.ts              pengaturan, fitur, warna cadangan jalur
 src/lib/data.ts            membaca Google Sheet atau snapshot
 src/lib/gpx.ts             membaca GPX, menghitung jarak dan tanjakan
 src/lib/urutan.ts          mengurutkan checkpoint di sepanjang rute
-src/pages/                 halaman: beranda, jalur, checkpoint, panduan, lapor, QR
+src/pages/                 halaman: beranda, jalur, checkpoint, panduan, saran rute, QR
 public/gpx/                file GPX per jalur
 data/snapshot/             salinan data dari Google Sheet
 ```

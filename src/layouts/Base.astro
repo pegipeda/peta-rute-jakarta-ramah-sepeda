@@ -9,7 +9,7 @@ const title = judul ? `${judul} · ${SITE.nama}` : `${SITE.nama} · ${SITE.oleh}
 const nav = [
   { href: '/', label: TEKS.umum.menuPeta, id: 'peta' },
   { href: '/panduan/', label: TEKS.umum.menuPanduan, id: 'panduan' },
-  ...(FITUR.lapor ? [{ href: '/lapor/', label: TEKS.umum.menuLapor, id: 'lapor' }] : []),
+  ...(FITUR.saranRute ? [{ href: '/saran-rute/', label: TEKS.umum.menuSaranRute, id: 'saran-rute' }] : []),
 ];
 ---
 <!doctype html>

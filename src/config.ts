@@ -14,16 +14,16 @@ export const SITE = {
 export const SHEET_ID = '1FZQ8hgiDadSPEhXDnIANdqpmeqMSfCy2kUXEEAppRCY';
 
 export const FITUR = {
-  // Halaman Lapor (formulir laporan komunitas).
-  lapor: true,
+  // Halaman Saran rute (formulir untuk relawan di luar PegiPeda).
+  saranRute: true,
   // Badge "Mitra PegiPeda" di checkpoint. Belum dipakai di MVP.
   badgeMitra: false,
   // Tampilkan QR di halaman checkpoint.
   qr: true,
 };
 
-// Link Google Form untuk laporan. Kosongkan kalau formulir belum siap.
-export const LAPOR_FORM_URL = '';
+// Link Google Form untuk saran rute. Kosongkan kalau formulir belum siap.
+export const SARAN_RUTE_FORM_URL = '';
 
 // Warna cadangan per jalur, dipakai kalau kolom "Warna" di sheet masih kosong.
 export const WARNA_JALUR: Record<string, string> = {

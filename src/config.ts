@@ -2,7 +2,7 @@
 
 export const SITE = {
   nama: 'Rute Ramah Sepeda',
-  oleh: 'PegiPeda',
+  oleh: 'pegipeda',
   deskripsi:
     'Peta rute ramah pesepeda di Jabodetabek: jalur, checkpoint, dan opsi transportasi umum yang bisa membawa sepeda.',
 };
@@ -14,16 +14,16 @@ export const SITE = {
 export const SHEET_ID = '1FZQ8hgiDadSPEhXDnIANdqpmeqMSfCy2kUXEEAppRCY';
 
 export const FITUR = {
-  // Halaman Saran rute (formulir untuk relawan di luar PegiPeda).
+  // Halaman Saran rute (formulir untuk relawan di luar pegipeda).
   saranRute: true,
-  // Badge "Mitra PegiPeda" di checkpoint. Belum dipakai di MVP.
+  // Badge "Mitra pegipeda" di checkpoint. Belum dipakai di MVP.
   badgeMitra: false,
   // Tampilkan QR di halaman checkpoint.
   qr: true,
 };
 
 // Link Google Form untuk saran rute. Kosongkan kalau formulir belum siap.
-export const SARAN_RUTE_FORM_URL = '';
+export const SARAN_RUTE_FORM_URL = 'https://forms.gle/Dpxqt5vrryQQMyt4A';
 
 // Warna cadangan per jalur, dipakai kalau kolom "Warna" di sheet masih kosong.
 export const WARNA_JALUR: Record<string, string> = {

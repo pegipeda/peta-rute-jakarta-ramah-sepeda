@@ -1,6 +1,6 @@
 # Peta Rute Jakarta Ramah Sepeda
 
-Web peta rute ramah pesepeda di Jabodetabek oleh komunitas PegiPeda. Berisi jalur bergaya peta KRL, checkpoint (kafe, bengkel, stasiun yang menerima sepeda), file GPX, dan QR untuk ditempel di lokasi.
+Web peta rute ramah pesepeda di Jabodetabek oleh komunitas pegipeda. Berisi jalur bergaya peta KRL, checkpoint (kafe, bengkel, stasiun yang menerima sepeda), file GPX, dan QR untuk ditempel di lokasi.
 
 Kata yang dipakai adalah **ramah**, bukan aman. Jalan dipakai bersama, jadi pesepeda tetap harus waspada.
 
@@ -33,7 +33,7 @@ Semua teks tampilan (judul, tombol, label, keterangan) dikumpulkan di `src/teks.
 
 ### Google Sheet
 
-Sumber data: Google Sheet "Peta Jalur Sepeda Jakarta" milik akun PegiPeda. Agar web membaca sheet secara langsung setiap kali dibangun, sheet harus dibagikan **"Siapa saja yang memiliki link: Pelihat"**. Kalau sheet tidak bisa dibaca, web memakai salinan terakhir di `data/snapshot/`.
+Sumber data: Google Sheet "Peta Jalur Sepeda Jakarta" milik akun pegipeda. Agar web membaca sheet secara langsung setiap kali dibangun, sheet harus dibagikan **"Siapa saja yang memiliki link: Pelihat"**. Kalau sheet tidak bisa dibaca, web memakai salinan terakhir di `data/snapshot/`.
 
 Untuk memperbarui salinan itu: `npm run sync-data`.
 
@@ -65,12 +65,12 @@ Jarak dan total tanjakan dihitung otomatis dari GPX. Semua file sekarang masih *
 
 Ada dua pintu masuk rute baru:
 
-- **Folder Drive "Survey Rute"**: untuk surveyor PegiPeda. Rekaman langsung diolah dan terbit saat admin bilang "rapikan".
-- **Halaman Saran rute** di web: untuk relawan di luar PegiPeda, lewat Google Form (isi dari mana ke mana plus file GPX). Saran tidak terbit otomatis; Claude merangkumnya saat "rapikan", lalu dikurasi bareng tim.
+- **Folder Drive "Survey Rute"**: untuk surveyor pegipeda. Rekaman langsung diolah dan terbit saat admin bilang "rapikan".
+- **Halaman Saran rute** di web: untuk relawan di luar pegipeda, lewat Google Form (isi dari mana ke mana plus file GPX). Saran tidak terbit otomatis; Claude merangkumnya saat "rapikan", lalu dikurasi bareng tim.
 
 Alur surveyor:
 
-1. Surveyor merekam rute dengan Strava, Komoot, atau Garmin, lalu mengunggah file GPX ke folder Google Drive **Survey Rute** milik akun PegiPeda. Nama file bebas.
+1. Surveyor merekam rute dengan Strava, Komoot, atau Garmin, lalu mengunggah file GPX ke folder Google Drive **Survey Rute** milik akun pegipeda. Nama file bebas.
 2. Admin membuka Claude dengan repo ini dan cukup bilang **"rapikan"**. Catatan surveyor boleh ditempel apa adanya, misalnya "Comum ada parkir sepeda, LooPs udah pindah".
 3. Claude mencocokkan rekaman ke jalur, memotong awal dan akhir rekaman supaya lokasi rumah surveyor tidak ikut terbit, memperbarui web, lalu melapor apa saja yang berubah.
 

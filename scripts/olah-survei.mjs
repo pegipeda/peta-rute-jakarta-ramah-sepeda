@@ -89,10 +89,10 @@ if (simpan) {
   const nama = /<name>([^<]*)<\/name>/.exec(fs.readFileSync(`public/gpx/${pilih.f}`, 'utf8'))?.[1]?.replace(/\s*\(draft\)/i, '') ?? pilih.f;
   const trk = bersih.map((p) => `      <trkpt lat="${p.lat}" lon="${p.lon}">${p.ele ? `<ele>${p.ele}</ele>` : ''}</trkpt>`).join('\n');
   fs.writeFileSync(`public/gpx/${pilih.f}`, `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="PegiPeda" xmlns="http://www.topografix.com/GPX/1/1">
+<gpx version="1.1" creator="pegipeda" xmlns="http://www.topografix.com/GPX/1/1">
   <metadata>
     <name>${nama}</name>
-    <desc>Rekaman survei PegiPeda, sudah dirapikan.</desc>
+    <desc>Rekaman survei pegipeda, sudah dirapikan.</desc>
   </metadata>
   <trk>
     <name>${nama}</name>
